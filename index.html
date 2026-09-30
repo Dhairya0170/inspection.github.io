@@ -1,485 +1,703 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Total Inspections | Media Clock</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{color-scheme:dark;--bg:#162b33;--orange:#f15b29;--green:#3fb37f;--app-bg:#f4f7f9;--border:#e2e8f0;--text:#14213d;--text-light:#6b7686;--body:"Manrope","Segoe UI",system-ui,sans-serif}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:var(--bg);cursor:none}
-
-/* fixed 1600x900 (16:9) canvas, scaled to fit any screen */
-#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:50% 50%;overflow:hidden;font-family:var(--body);
-  background:
-    radial-gradient(ellipse 700px 420px at 92% 6%,rgba(241,91,41,.20),transparent 70%),
-    radial-gradient(ellipse 800px 500px at 4% 100%,rgba(30,110,130,.22),transparent 70%),
-    var(--bg)}
-#stage::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);background-size:48px 48px}
-.brand{position:absolute;left:48px;top:30px;height:36px;mix-blend-mode:lighten}
-
-/* browser window */
-.win{position:absolute;left:48px;top:92px;width:902px;height:703px;border-radius:13px;background:#fff;overflow:hidden;box-shadow:0 40px 80px -20px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.08)}
-.bar{height:34px;background:#eceff3;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid #d9dee5;z-index:10;position:relative}
-.bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
-.bar i:nth-child(2){background:#febc2e}.bar i:nth-child(3){background:#28c840}
-.url{flex:1;margin-left:14px;height:20px;border-radius:10px;background:#fff;color:var(--text-light);font-size:11px;line-height:20px;padding:0 12px;transition:all 0.3s ease}
-.view{height:669px;overflow:hidden;position:relative;background:var(--app-bg)}
-
-/* --- CODED DESKTOP UI APP STYLES --- */
-.desk-sc{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;opacity:0;will-change:opacity}
-.desk-wrap{width:100%;height:860px;position:relative;will-change:transform} /* Taller than view to allow scroll */
-
-.app{display:flex;height:100%;width:100%;background:var(--app-bg);color:var(--text)}
-.sidebar{width:220px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column}
-.sb-logo{height:60px;display:flex;align-items:center;padding:0 24px;font-weight:700;font-size:16px;border-bottom:1px solid var(--border);color:var(--bg)}
-.sb-nav{padding:20px 12px;display:flex;flex-direction:column;gap:4px}
-.nav-item{padding:10px 12px;border-radius:6px;color:var(--text-light);font-size:13px;font-weight:600;display:flex;align-items:center;gap:12px}
-.nav-item.active{background:rgba(241,91,41,.1);color:var(--orange)}
-.nav-icon{width:16px;height:16px;border-radius:3px;background:currentColor;opacity:0.8}
-
-.main{flex:1;display:flex;flex-direction:column}
-.header{height:60px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 32px;justify-content:space-between}
-.header h1{font-size:18px;font-weight:700;margin:0}
-.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--bg)}
-
-.content{padding:32px;display:flex;flex-direction:column;gap:24px}
-.card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px;box-shadow:0 4px 12px rgba(0,0,0,.02)}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-
-/* D1: Dashboard Native Graph Layout */
-.dash-stats{display:flex;gap:24px}
-.stat-box{flex:1;background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px}
-.stat-box small{font-size:12px;color:var(--text-light);font-weight:600}
-.stat-box b{font-size:28px;line-height:1;font-weight:700}
-.stat-box.highlight b{color:var(--orange)}
-
-.graph-container{display:flex;align-items:flex-end;gap:20px;height:180px;margin-top:10px}
-.bar-chart{flex:1;height:100%}
-.line-chart{flex:1.5;height:100%}
-svg{width:100%;height:100%;overflow:visible}
-.b{fill:#0b57a4;transform-box:fill-box;transform-origin:50% 100%;transition:transform 0.1s ease-out}
-.b.hot{fill:var(--orange)}
-.line{fill:none;stroke:var(--orange);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
-
-/* D2: Templates List */
-.tpl-row{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--border)}
-.tpl-row:last-child{border-bottom:none}
-.tpl-info h4{font-size:14px;margin-bottom:4px}
-.tpl-info p{font-size:12px;color:var(--text-light)}
-.badge{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;background:#eef2f6;color:var(--text-light)}
-.badge.active{background:rgba(63,179,127,.15);color:var(--green)}
-
-/* D3: Branding Form */
-.form-group{margin-bottom:20px}
-.form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:8px;color:var(--text-light)}
-.input{width:100%;height:40px;border:1px solid var(--border);border-radius:6px;background:#f8fafc;padding:0 12px;font-family:inherit;font-size:14px}
-.color-picker{display:flex;gap:12px}
-.color-swatch{width:40px;height:40px;border-radius:6px;border:2px solid #fff;box-shadow:0 0 0 1px var(--border)}
-
-/* D4: Reports Table */
-.table{width:100%;border-collapse:collapse}
-.table th{text-align:left;padding:12px 16px;font-size:12px;color:var(--text-light);border-bottom:1px solid var(--border)}
-.table td{padding:16px;font-size:13px;font-weight:500;border-bottom:1px solid var(--border)}
-
-/* integrations */
-.links{position:absolute;inset:0;width:1600px;height:900px;pointer-events:none}
-.chip{position:absolute;left:1350px;width:176px;height:54px;border-radius:12px;background:rgba(30,56,66,.96);border:1px solid rgba(255,255,255,.1);
-  display:flex;align-items:center;gap:12px;padding:0 14px;color:#fff;font-weight:700;font-size:17px;box-shadow:0 14px 30px -12px rgba(0,0,0,.6)}
-.chip em{font-style:normal;width:28px;height:28px;border-radius:8px;background:var(--orange);display:grid;place-items:center;font-size:14px}
-
-/* phone */
-.phone{position:absolute;left:952px;top:186px;width:298px;height:590px;transform:rotate(-2.5deg);border-radius:40px;background:#060d13;padding:16px 8px 8px;display:flex;
-  box-shadow:0 40px 70px -20px rgba(0,0,0,.75),0 0 0 1.5px rgba(255,255,255,.14)}
-.phone::before{content:"";position:absolute;top:5px;left:50%;width:70px;height:8px;margin-left:-35px;border-radius:5px;background:#1b2731}
-.screen{flex:1;border-radius:30px;overflow:hidden;background:#dde7f5;position:relative}
-.sc{position:absolute;inset:0;overflow:hidden;opacity:0;background:#dde7f5}
-.sc img{display:block;width:108%;margin-left:-4%;height:auto;will-change:transform}
-
-.sent{position:absolute;inset:0;background:rgba(9,25,38,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;opacity:0}
-.sent span{width:74px;height:74px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:40px;margin-bottom:16px}
-.sent b{font-size:22px}
-.sent small{margin-top:6px;color:#b9c9d1;font-size:13px;line-height:1.4}
-
-/* toasts */
-.toast{position:absolute;height:58px;border-radius:12px;background:#fff;color:var(--text);display:flex;align-items:center;gap:12px;padding:0 16px 0 12px;box-shadow:0 18px 36px -14px rgba(0,0,0,.6);opacity:0}
-.toast i{font-style:normal;width:32px;height:32px;border-radius:9px;background:var(--orange);color:#fff;display:grid;place-items:center;font-size:17px;font-weight:700}
-.toast b{display:block;font-size:14px;line-height:1.2}
-.toast small{display:block;font-size:11.5px;color:var(--text-light)}
-#t1{left:640px;top:24px;width:300px}
-#t2{left:48px;top:822px;width:330px}#t2 i{background:#2a4652}
-#t3{left:1180px;top:822px;width:310px}#t3 i{background:var(--green)}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Inspections - Admin Portal</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brandBlue: '#1e40af', // Deep blue for primary elements
+                        brandLight: '#eff6ff',
+                        textMain: '#1e293b',
+                        textMuted: '#64748b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for a clean look */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .nav-active { background-color: #eff6ff; color: #1e40af; border-left: 3px solid #1e40af; }
+    </style>
 </head>
-<body>
-<div id="stage">
-  <img class="brand" src="images/logo.png" alt="Media Clock">
+<body class="flex h-screen bg-slate-50 text-slate-800 font-sans overflow-hidden">
 
-  <div class="win">
-    <div class="bar"><i></i><i></i><i></i><div class="url" id="url-bar">app.totalinspections.com.au/dashboard</div></div>
-    
-    <div class="view" id="desk-view">
-      
-      <!-- SCREEN 4: REPORTS ARCHIVE -->
-      <div class="desk-sc" id="dsc4">
-        <div class="desk-wrap">
-          <div class="app">
-            <div class="sidebar">
-              <div class="sb-logo">Total Inspections</div>
-              <div class="sb-nav">
-                <div class="nav-item"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
-                <div class="nav-item"><div class="nav-icon"></div> Templates</div>
-                <div class="nav-item"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
-                <div class="nav-item active"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
-              </div>
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between h-full z-10">
+        <div>
+            <!-- Logo -->
+            <div class="p-6 pb-2">
+                <h1 class="text-brandBlue font-bold text-lg tracking-wide uppercase leading-tight">Total<br>Inspections</h1>
+                <p class="text-xs text-brandBlue mt-2 font-medium tracking-wider uppercase">Admin Portal</p>
+                <p class="text-[10px] text-slate-400">Total Inspection</p>
             </div>
-            <div class="main">
-              <div class="header"><h1>Inspection Archive</h1><div class="user-avatar"></div></div>
-              <div class="content">
-                <div class="card" style="padding:0">
-                  <table class="table">
-                    <thead><tr><th>Date</th><th>Property Address</th><th>Inspector</th><th>Status</th></tr></thead>
-                    <tbody>
-                      <tr><td>Today, 09:30 AM</td><td>42 Riverside Drive, Brisbane</td><td>John S.</td><td><span class="badge active">Completed</span></td></tr>
-                      <tr><td>Yesterday</td><td>180 Smith Street, Melbourne</td><td>Mike T.</td><td><span class="badge active">Completed</span></td></tr>
-                      <tr><td>12 Oct 2023</td><td>8/15 Ocean View, Sydney</td><td>Sarah J.</td><td><span class="badge">Pending</span></td></tr>
-                      <tr><td>11 Oct 2023</td><td>9021 High Road, Perth</td><td>John S.</td><td><span class="badge active">Completed</span></td></tr>
-                      <tr><td>10 Oct 2023</td><td>23 Valley Court, Adelaide</td><td>Mike T.</td><td><span class="badge active">Completed</span></td></tr>
-                      <tr><td>08 Oct 2023</td><td>77 Park Avenue, Brisbane</td><td>Sarah J.</td><td><span class="badge active">Completed</span></td></tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
+
+            <!-- Navigation -->
+            <nav class="mt-6 flex flex-col gap-1">
+                <button onclick="switchView('dashboard')" id="nav-dashboard" class="nav-btn nav-active flex items-center w-full px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                    <i class="fa-solid fa-border-all w-5"></i>
+                    <span class="ml-2">Dashboard</span>
+                </button>
+                <button onclick="switchView('templates')" id="nav-templates" class="nav-btn flex items-center w-full px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors border-l-3 border-transparent">
+                    <i class="fa-solid fa-layer-group w-5"></i>
+                    <span class="ml-2">Templates</span>
+                </button>
+                <button onclick="switchView('branding')" id="nav-branding" class="nav-btn flex items-center w-full px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors border-l-3 border-transparent">
+                    <i class="fa-solid fa-palette w-5"></i>
+                    <span class="ml-2">Branding</span>
+                </button>
+                <button onclick="switchView('reports')" id="nav-reports" class="nav-btn flex items-center w-full px-6 py-3 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors border-l-3 border-transparent">
+                    <i class="fa-regular fa-file-lines w-5"></i>
+                    <span class="ml-2">Reports</span>
+                </button>
+            </nav>
         </div>
-      </div>
 
-      <!-- SCREEN 3: BRANDING -->
-      <div class="desk-sc" id="dsc3">
-        <div class="desk-wrap">
-          <div class="app">
-            <div class="sidebar">
-              <div class="sb-logo">Total Inspections</div>
-              <div class="sb-nav">
-                <div class="nav-item"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
-                <div class="nav-item"><div class="nav-icon"></div> Templates</div>
-                <div class="nav-item active"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
-                <div class="nav-item"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
-              </div>
+        <!-- Bottom Sidebar Actions -->
+        <div class="p-6">
+            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium shadow-sm mb-6 transition">
+                + New Inspection
+            </button>
+            <div class="flex flex-col gap-3">
+                <a href="#" class="flex items-center text-sm text-slate-500 hover:text-slate-800"><i class="fa-solid fa-gear w-6"></i> Settings</a>
+                <a href="#" class="flex items-center text-sm text-slate-500 hover:text-slate-800"><i class="fa-regular fa-circle-question w-6"></i> Support</a>
             </div>
-            <div class="main">
-              <div class="header"><h1>Branding Identity</h1><div class="user-avatar"></div></div>
-              <div class="content">
-                <div class="grid-2">
-                  <div class="card">
-                    <h3 style="margin-bottom:20px;font-size:15px">Global Settings</h3>
-                    <div class="form-group">
-                      <label>Company Name</label>
-                      <div class="input" style="line-height:40px;color:#14213d">Total Inspections AU</div>
-                    </div>
-                    <div class="form-group">
-                      <label>Report Accent Colors</label>
-                      <div class="color-picker">
-                        <div class="color-swatch" style="background:var(--orange)"></div>
-                        <div class="color-swatch" style="background:#162b33"></div>
-                        <div class="color-swatch" style="background:var(--green)"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card" style="display:flex;align-items:center;justify-content:center;background:#f8fafc;border:2px dashed var(--border)">
-                    <div style="text-align:center;color:var(--text-light)">
-                      <div style="font-size:24px;margin-bottom:8px">☁️</div>
-                      <b>Upload Logo</b><br><small>PNG or SVG (Max 2MB)</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
+    </aside>
 
-      <!-- SCREEN 2: TEMPLATES -->
-      <div class="desk-sc" id="dsc2">
-        <div class="desk-wrap">
-          <div class="app">
-            <div class="sidebar">
-              <div class="sb-logo">Total Inspections</div>
-              <div class="sb-nav">
-                <div class="nav-item"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
-                <div class="nav-item active"><div class="nav-icon"></div> Templates</div>
-                <div class="nav-item"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
-                <div class="nav-item"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
-              </div>
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden">
+        
+        <!-- TOP HEADER -->
+        <header class="h-16 bg-white/50 backdrop-blur-sm border-b border-slate-200 flex items-center justify-between px-8 z-10">
+            <!-- Search -->
+            <div class="relative w-96">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-sm"></i>
+                <input type="text" placeholder="Search records, inspectors, or reports..." class="w-full bg-slate-100/50 border border-slate-200 text-sm rounded-lg pl-9 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition">
             </div>
-            <div class="main">
-              <div class="header"><h1>Template Management</h1><div class="user-avatar"></div></div>
-              <div class="content">
-                <div class="card" style="padding:0">
-                  <div class="tpl-row">
-                    <div class="tpl-info"><h4>Residential Pre-Purchase</h4><p>Standard building inspection framework</p></div>
-                    <span class="badge active">Active</span>
-                  </div>
-                  <div class="tpl-row">
-                    <div class="tpl-info"><h4>Timber & Pest Inspection</h4><p>AS 4349.3 compliant formatting</p></div>
-                    <span class="badge active">Active</span>
-                  </div>
-                  <div class="tpl-row">
-                    <div class="tpl-info"><h4>Commercial Dilapidation</h4><p>Pre-construction condition report</p></div>
-                    <span class="badge">Draft</span>
-                  </div>
-                  <div class="tpl-row">
-                    <div class="tpl-info"><h4>Pool Safety Certification</h4><p>Barrier and fence compliance checklist</p></div>
-                    <span class="badge active">Active</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SCREEN 1: DASHBOARD (Active natively with animated SVG) -->
-      <div class="desk-sc" id="dsc1" style="opacity: 1;">
-        <div class="desk-wrap">
-          <div class="app">
-            <div class="sidebar">
-              <div class="sb-logo">Total Inspections</div>
-              <div class="sb-nav">
-                <div class="nav-item active"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
-                <div class="nav-item"><div class="nav-icon"></div> Templates</div>
-                <div class="nav-item"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
-                <div class="nav-item"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
-              </div>
-            </div>
-            <div class="main">
-              <div class="header"><h1>Dashboard Overview</h1><div class="user-avatar"></div></div>
-              <div class="content">
-                <div class="dash-stats">
-                  <div class="stat-box highlight"><small>Jobs Completed</small><b id="jobs">0</b></div>
-                  <div class="stat-box"><small>Revenue (MTD)</small><b id="rev">$0.0k</b></div>
-                  <div class="stat-box"><small>Active Field Teams</small><b style="color:var(--text)">4</b></div>
-                </div>
-                
-                <div class="card">
-                  <h3 style="margin-bottom:16px;font-size:15px;color:var(--text)">Performance Metrics</h3>
-                  <div class="graph-container">
-                    <div class="bar-chart">
-                      <svg viewBox="0 0 138 60" aria-hidden="true">
-                        <rect class="b" x="0"   width="14" y="33" height="27" rx="2"/>
-                        <rect class="b" x="20"  width="14" y="22" height="38" rx="2"/>
-                        <rect class="b" x="40"  width="14" y="35" height="25" rx="2"/>
-                        <rect class="b" x="60"  width="14" y="17" height="43" rx="2"/>
-                        <rect class="b" x="80"  width="14" y="25" height="35" rx="2"/>
-                        <rect class="b hot" x="100" width="14" y="6" height="54" rx="2"/>
-                        <rect class="b" x="120" width="14" y="30" height="30" rx="2"/>
-                      </svg>
+            
+            <!-- Right Actions -->
+            <div class="flex items-center gap-6">
+                <button class="relative text-slate-400 hover:text-slate-600">
+                    <i class="fa-regular fa-bell text-lg"></i>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
+                </button>
+                <div class="flex items-center gap-3 border-l border-slate-200 pl-6">
+                    <div class="text-right">
+                        <p class="text-sm font-semibold text-slate-800">Alex Stratton</p>
+                        <p class="text-[10px] text-slate-500 font-medium uppercase tracking-wider">System Admin</p>
                     </div>
-                    <div class="line-chart">
-                      <svg viewBox="0 0 200 60" aria-hidden="true" preserveAspectRatio="none">
-                        <defs>
-                          <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0" stop-color="#f15b29" stop-opacity=".35"/>
-                            <stop offset="1" stop-color="#f15b29" stop-opacity="0"/>
-                          </linearGradient>
-                        </defs>
-                        <path id="area" fill="url(#fill)"/>
-                        <path id="ln" class="line"/>
-                        <circle id="live-dot" r="3.5" fill="#f15b29"/>
-                      </svg>
-                    </div>
-                  </div>
+                    <img src="https://ui-avatars.com/api/?name=Alex+Stratton&background=1e40af&color=fff" alt="Profile" class="w-9 h-9 rounded-full shadow-sm">
                 </div>
-              </div>
             </div>
-          </div>
+        </header>
+
+        <!-- SCROLLABLE VIEWS -->
+        <div class="flex-1 overflow-y-auto p-8">
+            <div class="max-w-6xl mx-auto">
+
+                <!-- ==========================================
+                     VIEW 1: DASHBOARD (Ref: d1_2.jpg)
+                     ========================================== -->
+                <div id="view-dashboard" class="view-section block">
+                    <!-- Page Header -->
+                    <div class="flex justify-between items-end mb-8">
+                        <div>
+                            <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Dashboard Overview</h2>
+                            <p class="text-slate-500 mt-1">Real-time operational status for Total Inspections.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 shadow-sm flex items-center gap-2 hover:bg-slate-50">
+                                <i class="fa-regular fa-calendar"></i> Last 30 Days
+                            </button>
+                            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm flex items-center gap-2 transition">
+                                <i class="fa-solid fa-download"></i> Export PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4 Stat Cards -->
+                    <div class="grid grid-cols-4 gap-6 mb-6">
+                        <!-- Card 1 -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center"><i class="fa-regular fa-clipboard"></i></div>
+                                <span class="text-xs font-semibold text-emerald-600">+12.4%</span>
+                            </div>
+                            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-4">Total Inspections</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-1">1,429</h3>
+                            <p class="text-[10px] text-slate-400 mt-2">Calculated for the current month</p>
+                        </div>
+                        <!-- Card 2 -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="w-8 h-8 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center"><i class="fa-solid fa-user-tie"></i></div>
+                                <span class="text-xs font-semibold text-orange-500">88% Capacity</span>
+                            </div>
+                            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-4">Active Inspectors</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-1">42</h3>
+                            <p class="text-[10px] text-slate-400 mt-2">6 currently on-site across regions</p>
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="bg-white p-5 rounded-xl border border-slate-100 shadow-sm">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-500 flex items-center justify-center"><i class="fa-solid fa-bolt"></i></div>
+                                <span class="text-xs font-semibold text-emerald-600">Stable</span>
+                            </div>
+                            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mt-4">System Uptime</p>
+                            <h3 class="text-3xl font-bold text-slate-800 mt-1">99.98%</h3>
+                            <p class="text-[10px] text-slate-400 mt-2">Reports generation engine status</p>
+                        </div>
+                        <!-- Card 4 (Blue Solid) -->
+                        <div class="bg-blue-600 p-5 rounded-xl shadow-md text-white relative overflow-hidden">
+                            <i class="fa-solid fa-certificate absolute -bottom-4 -right-4 text-6xl text-blue-500 opacity-30"></i>
+                            <div class="relative z-10">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div class="w-8 h-8 rounded-lg bg-white/20 text-white flex items-center justify-center backdrop-blur-sm"><i class="fa-regular fa-circle-check"></i></div>
+                                    <span class="text-xs font-medium text-blue-100">Target: 95%</span>
+                                </div>
+                                <p class="text-[11px] font-semibold text-blue-200 uppercase tracking-wider mt-4">Compliance Status</p>
+                                <h3 class="text-3xl font-bold mt-1">96.4%</h3>
+                                <p class="text-[10px] text-blue-200 mt-2">Reports finalized on schedule</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Middle Grid Section -->
+                    <div class="grid grid-cols-3 gap-6 mb-6">
+                        <!-- Left Column (Span 2) -->
+                        <div class="col-span-2 flex flex-col gap-6">
+                            <!-- Category Bars -->
+                            <div class="bg-white p-6 rounded-xl border border-slate-100 shadow-sm">
+                                <div class="flex justify-between items-center mb-6">
+                                    <div>
+                                        <h3 class="font-bold text-slate-800">Inspections by Category</h3>
+                                        <p class="text-xs text-slate-500 mt-0.5">Volume distribution per structural type</p>
+                                    </div>
+                                    <button class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-chart-pie"></i></button>
+                                </div>
+                                
+                                <div class="grid grid-cols-2 gap-x-8 gap-y-6">
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-2"><span class="font-medium text-slate-700">Residential Standard</span><span class="text-blue-600 font-bold">582</span></div>
+                                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-blue-600 h-2 rounded-full" style="width: 75%"></div></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-2"><span class="font-medium text-slate-700">Pest & Termite</span><span class="text-blue-600 font-bold">410</span></div>
+                                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-blue-600 h-2 rounded-full" style="width: 55%"></div></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-2"><span class="font-medium text-slate-700">Commercial Facilities</span><span class="text-blue-600 font-bold">284</span></div>
+                                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-slate-700 h-2 rounded-full" style="width: 40%"></div></div>
+                                    </div>
+                                    <div>
+                                        <div class="flex justify-between text-sm mb-2"><span class="font-medium text-slate-700">Pre-Purchase Audit</span><span class="text-blue-600 font-bold">153</span></div>
+                                        <div class="w-full bg-slate-100 rounded-full h-2"><div class="bg-slate-300 h-2 rounded-full" style="width: 25%"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Banner -->
+                            <div class="bg-brandLight border border-blue-100 rounded-xl p-5 flex items-center justify-between shadow-sm">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-16 h-12 bg-white rounded border border-slate-200 overflow-hidden flex items-center justify-center">
+                                        <i class="fa-solid fa-compass-drafting text-2xl text-slate-300"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-sm font-bold text-slate-800">New Inspection Template</h4>
+                                        <p class="text-xs text-slate-500 mt-1 max-w-md leading-relaxed">The "Industrial Complex v4.2" template was successfully deployed. All inspectors have been notified of the update.</p>
+                                    </div>
+                                </div>
+                                <button class="w-8 h-8 rounded-full hover:bg-blue-100 text-blue-600 flex items-center justify-center transition"><i class="fa-solid fa-arrow-right"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Right Column (System Activity) -->
+                        <div class="bg-slate-200/50 rounded-xl p-6 border border-slate-200 shadow-inner h-full">
+                            <h3 class="font-bold text-slate-800 mb-6">System Activity</h3>
+                            <div class="relative border-l border-slate-300 ml-2 space-y-6">
+                                <div class="pl-5 relative">
+                                    <div class="absolute w-2.5 h-2.5 bg-blue-600 rounded-full -left-[5px] top-1 ring-4 ring-slate-100"></div>
+                                    <h4 class="text-sm font-semibold text-slate-800">New branding assets uploaded</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Corporate marketing package.</p>
+                                    <span class="text-[10px] font-bold text-slate-400 mt-1 block uppercase">14 Minutes Ago</span>
+                                </div>
+                                <div class="pl-5 relative">
+                                    <div class="absolute w-2.5 h-2.5 bg-blue-600 rounded-full -left-[5px] top-1 ring-4 ring-slate-100"></div>
+                                    <h4 class="text-sm font-semibold text-slate-800">API Key Rotation</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Security protocol completed for AWS instances.</p>
+                                    <span class="text-[10px] font-bold text-slate-400 mt-1 block uppercase">2 Hours Ago</span>
+                                </div>
+                                <div class="pl-5 relative">
+                                    <div class="absolute w-2.5 h-2.5 bg-blue-600 rounded-full -left-[5px] top-1 ring-4 ring-slate-100"></div>
+                                    <h4 class="text-sm font-semibold text-slate-800">Regional Server Sync</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Australia East database mirrored successfully.</p>
+                                    <span class="text-[10px] font-bold text-slate-400 mt-1 block uppercase">Yesterday, 11:45 PM</span>
+                                </div>
+                            </div>
+                            <button class="w-full mt-8 py-2 text-sm font-medium text-blue-700 bg-blue-100/50 hover:bg-blue-100 rounded-lg border border-blue-200 transition">View Full System Log</button>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Grid Section -->
+                    <div class="grid grid-cols-3 gap-6">
+                        <!-- Table -->
+                        <div class="col-span-2 bg-brandLight/50 p-6 rounded-xl border border-slate-200">
+                            <h3 class="font-bold text-slate-800 mb-4">Recent Reports Compliance</h3>
+                            <table class="w-full text-left">
+                                <thead>
+                                    <tr class="text-[10px] text-slate-400 uppercase tracking-wider border-b border-slate-200">
+                                        <th class="pb-3 font-semibold">Report ID</th>
+                                        <th class="pb-3 font-semibold">Inspector</th>
+                                        <th class="pb-3 font-semibold">Category</th>
+                                        <th class="pb-3 font-semibold">Timeline</th>
+                                        <th class="pb-3 font-semibold text-right">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm text-slate-700 divide-y divide-slate-100">
+                                    <tr>
+                                        <td class="py-4 font-semibold text-slate-900">#TI-90412</td>
+                                        <td class="py-4">Marcus Vane</td>
+                                        <td class="py-4">Residential</td>
+                                        <td class="py-4 text-slate-500">2.4h turnaround</td>
+                                        <td class="py-4 text-right"><span class="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded uppercase">Passed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-4 font-semibold text-slate-900">#TI-89211</td>
+                                        <td class="py-4">Sarah Jenkins</td>
+                                        <td class="py-4">Commercial</td>
+                                        <td class="py-4 text-slate-500">4.8h turnaround</td>
+                                        <td class="py-4 text-right"><span class="text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded uppercase">Passed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="py-4 font-semibold text-slate-900">#TI-88764</td>
+                                        <td class="py-4">Tom Halloway</td>
+                                        <td class="py-4">Pest Control</td>
+                                        <td class="py-4 text-slate-500">6.1h turnaround</td>
+                                        <td class="py-4 text-right"><span class="text-[10px] font-bold text-orange-600 bg-orange-100 px-2 py-1 rounded uppercase">Late</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Optimization Tip -->
+                        <div class="bg-indigo-900 text-white p-6 rounded-xl relative overflow-hidden shadow-lg flex flex-col justify-between">
+                            <i class="fa-solid fa-lightbulb text-yellow-400 text-xl absolute top-6 left-6"></i>
+                            <div class="mt-8 relative z-10">
+                                <h3 class="font-bold text-lg mb-2">Optimization Tip</h3>
+                                <p class="text-sm text-indigo-200 leading-relaxed mb-6">Switching to the new "Neural Image Tagger" can reduce report finalization time by an average of 18%.</p>
+                                <button class="text-sm font-semibold text-white hover:text-indigo-200 transition">Configure Settings &rarr;</button>
+                            </div>
+                            <!-- Background decorative shape -->
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-indigo-700 rounded-full opacity-50 blur-2xl"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     VIEW 2: TEMPLATES (Ref: d2_2.jpg)
+                     ========================================== -->
+                <div id="view-templates" class="view-section hidden">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Dashboard <span class="text-slate-300 px-1">&gt;</span> Template Management</p>
+                    <div class="flex justify-between items-end mb-8">
+                        <div>
+                            <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Template Management</h2>
+                            <p class="text-slate-500 mt-1 max-w-xl">Configure and standardize your inspection frameworks. Ensure compliance and consistency across all field reports.</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 flex items-center gap-2 hover:bg-slate-50">
+                                <i class="fa-solid fa-filter"></i> Filter
+                            </button>
+                            <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm flex items-center gap-2 transition">
+                                <i class="fa-solid fa-plus"></i> Create Template
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-6 mb-12">
+                        <!-- Card 1: Residential -->
+                        <div class="bg-white rounded-xl border border-slate-100 shadow-sm p-6 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-blue-100 text-blue-700 text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">Residential</div>
+                            <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-4"><i class="fa-solid fa-house"></i></div>
+                            <h3 class="font-bold text-slate-800 text-lg">Pre-Purchase<br>Structural</h3>
+                            <p class="text-xs text-slate-500 mt-2 line-clamp-2">Comprehensive structural assessment for domestic properties...</p>
+                            <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-100">
+                                <span class="text-xs font-semibold text-slate-400">12 SECTIONS</span>
+                                <div class="flex gap-2 text-slate-400">
+                                    <button class="hover:text-blue-600"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="hover:text-blue-600"><i class="fa-regular fa-copy"></i></button>
+                                    <button class="hover:text-red-500"><i class="fa-regular fa-trash-can"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Pest Control -->
+                        <div class="bg-orange-50/50 rounded-xl border border-orange-100 shadow-sm p-6 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-orange-100 text-orange-700 text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">Pest Control</div>
+                            <div class="w-10 h-10 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center mb-4"><i class="fa-solid fa-bug"></i></div>
+                            <h3 class="font-bold text-slate-800 text-lg">Termite & Timber<br>Pest</h3>
+                            <p class="text-xs text-slate-600 mt-2 line-clamp-2">Standard AS 4349.3 inspection focusing on timber-destroying...</p>
+                            <div class="flex justify-between items-center mt-6 pt-4 border-t border-orange-200">
+                                <span class="text-xs font-semibold text-slate-500">8 SECTIONS</span>
+                                <div class="flex gap-2 text-slate-400">
+                                    <button class="hover:text-blue-600"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="hover:text-blue-600"><i class="fa-regular fa-copy"></i></button>
+                                    <button class="hover:text-red-500"><i class="fa-regular fa-trash-can"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Commercial -->
+                        <div class="bg-emerald-50/50 rounded-xl border border-emerald-100 shadow-sm p-6 relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-emerald-100 text-emerald-700 text-[10px] font-bold px-3 py-1 rounded-bl-lg uppercase tracking-wider">Commercial</div>
+                            <div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mb-4"><i class="fa-solid fa-city"></i></div>
+                            <h3 class="font-bold text-slate-800 text-lg">Industrial Facility<br>Audit</h3>
+                            <p class="text-xs text-slate-600 mt-2 line-clamp-2">Heavy-duty assessment for industrial plants, including safety...</p>
+                            <div class="flex justify-between items-center mt-6 pt-4 border-t border-emerald-200">
+                                <span class="text-xs font-semibold text-slate-500">24 SECTIONS</span>
+                                <div class="flex gap-2 text-slate-400">
+                                    <button class="hover:text-blue-600"><i class="fa-solid fa-pen"></i></button>
+                                    <button class="hover:text-blue-600"><i class="fa-regular fa-copy"></i></button>
+                                    <button class="hover:text-red-500"><i class="fa-regular fa-trash-can"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Create New -->
+                        <button class="border-2 border-dashed border-slate-300 rounded-xl flex flex-col items-center justify-center text-slate-500 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition min-h-[240px]">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mb-3 group-hover:bg-blue-100"><i class="fa-solid fa-plus"></i></div>
+                            <span class="font-semibold">Create New Template</span>
+                            <span class="text-xs mt-1 text-slate-400">Start from a blank canvas</span>
+                        </button>
+                    </div>
+
+                    <!-- Bottom Section of Templates -->
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="col-span-2">
+                            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Recent Template Activity</h4>
+                            <div class="space-y-4">
+                                <div class="flex gap-3 items-center">
+                                    <div class="w-2 h-2 rounded-full bg-blue-600"></div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-800">Residential Structural Template updated</p>
+                                        <p class="text-xs text-slate-500">By David Chen • 14 minutes ago</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3 items-center">
+                                    <div class="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-800">New "Dilapidation Report" template created</p>
+                                        <p class="text-xs text-slate-500">By Sarah Williams • 2 hours ago</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3 items-center">
+                                    <div class="w-2 h-2 rounded-full bg-orange-400"></div>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-800">Pest Template version 2.4 archived</p>
+                                        <p class="text-xs text-slate-500">System Audit • Yesterday</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="bg-blue-50/50 p-5 rounded-xl border border-blue-100 flex-1">
+                                <div class="text-blue-600 mb-2"><i class="fa-solid fa-chart-simple"></i></div>
+                                <p class="text-[10px] font-bold text-slate-500 uppercase">Total Templates</p>
+                                <h3 class="text-2xl font-bold text-slate-800 mt-1">24</h3>
+                                <p class="text-[10px] text-emerald-600 mt-1"><i class="fa-solid fa-arrow-trend-up"></i> 12% increase this month</p>
+                            </div>
+                            <div class="bg-blue-50/50 p-5 rounded-xl border border-blue-100 flex-1">
+                                <div class="text-blue-600 mb-2"><i class="fa-solid fa-ranking-star"></i></div>
+                                <p class="text-[10px] font-bold text-slate-500 uppercase">Most Used</p>
+                                <h3 class="text-sm font-bold text-slate-800 mt-1 leading-tight">Residential<br>Standard</h3>
+                                <p class="text-[10px] text-slate-500 mt-1">1,240 inspections completed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     VIEW 3: BRANDING (Ref: d3_2.jpg)
+                     ========================================== -->
+                <div id="view-branding" class="view-section hidden">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Admin Configuration</p>
+                    <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Branding Identity</h2>
+                    <p class="text-slate-500 mt-1 max-w-2xl mb-8">Manage the visual authority of Total Inspections. Define category logos, professional seals, and legal credentials for high-fidelity report generation.</p>
+
+                    <div class="grid grid-cols-3 gap-6 mb-10">
+                        <!-- Logos Section -->
+                        <div class="col-span-2 bg-white rounded-xl border border-slate-100 p-8 shadow-sm">
+                            <div class="flex justify-between items-center mb-6">
+                                <div>
+                                    <h3 class="font-bold text-slate-800 text-lg">Category Specific Logos</h3>
+                                    <p class="text-xs text-slate-500 mt-1">Used for specialized sections of inspection.</p>
+                                </div>
+                                <button class="text-sm text-blue-600 font-medium hover:underline"><i class="fa-solid fa-upload"></i> Bulk Upload</button>
+                            </div>
+                            
+                            <div class="flex gap-6">
+                                <div class="border border-slate-200 rounded-lg p-4 flex-1 text-center bg-slate-50">
+                                    <p class="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-4">Building Inspection</p>
+                                    <div class="bg-white w-full h-32 rounded border border-slate-200 mb-4 flex items-center justify-center">
+                                        <i class="fa-solid fa-house-chimney text-4xl text-slate-700"></i><i class="fa-solid fa-magnifying-glass text-2xl text-slate-400 -ml-2 mt-4"></i>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-slate-500">building_logo_v2.png</span>
+                                        <span class="font-bold text-emerald-500">ACTIVE</span>
+                                    </div>
+                                </div>
+                                <div class="border border-slate-200 rounded-lg p-4 flex-1 text-center bg-slate-50">
+                                    <p class="text-[10px] font-bold text-orange-600 uppercase tracking-wider mb-4">Pest Control</p>
+                                    <div class="bg-white w-full h-32 rounded border border-slate-200 mb-4 flex items-center justify-center">
+                                        <div class="w-16 h-16 border-2 border-black rounded-full flex items-center justify-center relative">
+                                            <i class="fa-solid fa-bug text-2xl"></i>
+                                            <div class="absolute w-full h-0.5 bg-black rotate-45"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-between items-center text-xs">
+                                        <span class="text-slate-500">pest_division_2024.svg</span>
+                                        <span class="font-bold text-emerald-500">ACTIVE</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Report Seals Section -->
+                        <div class="bg-blue-600 rounded-xl p-8 shadow-md text-white flex flex-col justify-between">
+                            <div>
+                                <h3 class="font-bold text-lg mb-2">Official Report Seals</h3>
+                                <p class="text-sm text-blue-200">Management of watermark seals for finalized PDF authenticity.</p>
+                            </div>
+                            <div class="space-y-3 mt-6">
+                                <div class="bg-white/10 rounded-lg p-3 flex items-center gap-4 backdrop-blur-sm border border-white/20">
+                                    <div class="w-10 h-10 rounded-full bg-white text-blue-600 flex items-center justify-center text-xl"><i class="fa-solid fa-certificate"></i></div>
+                                    <div>
+                                        <p class="font-semibold text-sm">Structural Certified</p>
+                                        <p class="text-[10px] text-blue-200">Seal #TI-2940-ST</p>
+                                    </div>
+                                </div>
+                                <div class="bg-black/10 rounded-lg p-3 flex items-center gap-4 border border-black/5 opacity-70">
+                                    <div class="w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center text-xl"><i class="fa-solid fa-lock"></i></div>
+                                    <div>
+                                        <p class="font-semibold text-sm">Standard Compliance</p>
+                                        <p class="text-[10px] text-blue-200">Archived (Feb 2023)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="w-full bg-white text-blue-600 font-semibold py-2 rounded-lg mt-6 shadow-sm hover:bg-slate-50 transition text-sm">
+                                <i class="fa-solid fa-gear mr-1"></i> Manage Seals
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Asset Delivery Controls -->
+                    <h3 class="font-bold text-slate-800 text-lg mb-4">Asset Delivery Controls</h3>
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="font-semibold text-sm text-slate-800">Force High-Resolution</span>
+                                <!-- Toggle Switch On -->
+                                <div class="w-10 h-5 bg-blue-600 rounded-full relative cursor-pointer">
+                                    <div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500">Automatically upscale logos for large-format print reports (A3+).</p>
+                        </div>
+                        <div class="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="font-semibold text-sm text-slate-800">Dynamic Header Colors</span>
+                                <!-- Toggle Switch Off -->
+                                <div class="w-10 h-5 bg-slate-200 rounded-full relative cursor-pointer">
+                                    <div class="w-4 h-4 bg-white rounded-full absolute left-0.5 top-0.5 shadow"></div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500">Extract dominant logo colors to set report primary accent theme.</p>
+                        </div>
+                        <div class="bg-white rounded-xl border border-slate-100 p-5 shadow-sm">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="font-semibold text-sm text-slate-800">Seal Watermarking</span>
+                                <!-- Toggle Switch On -->
+                                <div class="w-10 h-5 bg-blue-600 rounded-full relative cursor-pointer">
+                                    <div class="w-4 h-4 bg-white rounded-full absolute right-0.5 top-0.5 shadow"></div>
+                                </div>
+                            </div>
+                            <p class="text-xs text-slate-500">Embed invisible cryptographical signature in all inspection exports.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     VIEW 4: REPORTS (Ref: d4_2.jpg)
+                     ========================================== -->
+                <div id="view-reports" class="view-section hidden">
+                    <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">Overview <span class="text-slate-300 px-1">—</span></p>
+                    <div class="flex justify-between items-center mb-8">
+                        <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Inspection Archive</h2>
+                        <button class="px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-medium shadow-sm flex items-center gap-2 hover:bg-blue-800 transition">
+                            <i class="fa-solid fa-filter"></i> Advanced Filters
+                        </button>
+                    </div>
+
+                    <!-- Filter Bar -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-sm mb-6 flex gap-4 items-end">
+                        <div class="flex-1">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Date Range</label>
+                            <div class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 flex justify-between items-center bg-slate-50 cursor-pointer">
+                                <span><i class="fa-regular fa-calendar mr-2"></i> Last 30 Days</span> <i class="fa-solid fa-chevron-down text-slate-400 text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Category</label>
+                            <div class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 flex justify-between items-center bg-slate-50 cursor-pointer">
+                                <span><i class="fa-solid fa-shapes mr-2"></i> All Categories</span> <i class="fa-solid fa-chevron-down text-slate-400 text-xs"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Status</label>
+                            <div class="border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 flex justify-between items-center bg-slate-50 cursor-pointer">
+                                <span><i class="fa-solid fa-lock-open mr-2"></i> Open</span> <i class="fa-solid fa-chevron-down text-slate-400 text-xs"></i>
+                            </div>
+                        </div>
+                        <button class="text-sm font-medium text-blue-600 hover:underline px-4 py-2 mb-0.5">Clear All</button>
+                    </div>
+
+                    <!-- Data Table -->
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/80 text-[10px] text-slate-400 uppercase tracking-wider border-b border-slate-200">
+                                    <th class="py-4 px-6 font-semibold">Report ID</th>
+                                    <th class="py-4 px-6 font-semibold">Property Address</th>
+                                    <th class="py-4 px-6 font-semibold">Inspector</th>
+                                    <th class="py-4 px-6 font-semibold">Date Submitted</th>
+                                    <th class="py-4 px-6 font-semibold">Status</th>
+                                    <th class="py-4 px-6 font-semibold"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm text-slate-700 divide-y divide-slate-100">
+                                <!-- Row 1 -->
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-4 px-6 font-semibold text-blue-600">#INSP-2940</td>
+                                    <td class="py-4 px-6 text-xs text-slate-600 max-w-[200px]">482 Oakwood Ave, Sydney<br>NSW 2000, Australia</td>
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">MJ</div>
+                                            <span class="font-medium">Marcus Jensen</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-500">Oct 24, 2023</td>
+                                    <td class="py-4 px-6"><span class="flex items-center gap-1.5 text-[10px] font-bold text-slate-600 uppercase"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Finalized</span></td>
+                                    <td class="py-4 px-6 text-right"><button class="text-[10px] font-bold text-blue-600 uppercase hover:underline">Edit</button></td>
+                                </tr>
+                                <!-- Row 2 -->
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-4 px-6 font-semibold text-blue-600">#INSP-2941</td>
+                                    <td class="py-4 px-6 text-xs text-slate-600 max-w-[200px]">12 North Quay Plaza, Brisbane<br>QLD 4000, Australia</td>
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold flex items-center justify-center">SL</div>
+                                            <span class="font-medium">Sarah Lynch</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-500">Oct 25, 2023</td>
+                                    <td class="py-4 px-6"><span class="flex items-center gap-1.5 text-[10px] font-bold text-slate-600 uppercase"><div class="w-1.5 h-1.5 rounded-full bg-slate-300"></div> Pending</span></td>
+                                    <td class="py-4 px-6 text-right"><button class="text-[10px] font-bold text-blue-600 uppercase hover:underline">Edit</button></td>
+                                </tr>
+                                <!-- Row 3 -->
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-4 px-6 font-semibold text-blue-600">#INSP-2942</td>
+                                    <td class="py-4 px-6 text-xs text-slate-600 max-w-[200px]">88 Collins St, Melbourne<br>VIC 3000, Australia</td>
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded-full bg-orange-100 text-orange-700 text-[10px] font-bold flex items-center justify-center">DR</div>
+                                            <span class="font-medium">David Ross</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-500">Oct 26, 2023</td>
+                                    <td class="py-4 px-6"><span class="flex items-center gap-1.5 text-[10px] font-bold text-slate-600 uppercase"><div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> Sent to Client</span></td>
+                                    <td class="py-4 px-6 text-right"><button class="text-[10px] font-bold text-blue-600 uppercase hover:underline">Edit</button></td>
+                                </tr>
+                                <!-- Row 4 -->
+                                <tr class="hover:bg-slate-50 transition">
+                                    <td class="py-4 px-6 font-semibold text-blue-600">#INSP-2943</td>
+                                    <td class="py-4 px-6 text-xs text-slate-600 max-w-[200px]">54 West Terrace, Perth<br>WA 6000, Australia</td>
+                                    <td class="py-4 px-6">
+                                        <div class="flex items-center gap-2">
+                                            <div class="w-6 h-6 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold flex items-center justify-center">MJ</div>
+                                            <span class="font-medium">Marcus Jensen</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-500">Oct 27, 2023</td>
+                                    <td class="py-4 px-6"><span class="flex items-center gap-1.5 text-[10px] font-bold text-slate-600 uppercase"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div> Finalized</span></td>
+                                    <td class="py-4 px-6 text-right"><button class="text-[10px] font-bold text-blue-600 uppercase hover:underline">Edit</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <!-- Pagination -->
+                        <div class="bg-white border-t border-slate-200 px-6 py-4 flex justify-between items-center text-xs text-slate-500">
+                            <span>Showing 1-10 of 154 reports</span>
+                            <div class="flex gap-1">
+                                <button class="w-7 h-7 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+                                <button class="w-7 h-7 rounded bg-blue-600 text-white font-medium flex items-center justify-center">1</button>
+                                <button class="w-7 h-7 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50">2</button>
+                                <button class="w-7 h-7 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50">3</button>
+                                <span class="px-2 pt-1">...</span>
+                                <button class="w-7 h-7 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50">16</button>
+                                <button class="w-7 h-7 rounded border border-slate-200 flex items-center justify-center hover:bg-slate-50"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
-      </div>
+    </main>
 
-    </div>
-  </div>
+    <!-- JavaScript to handle navigation switching -->
+    <script>
+        function switchView(viewName) {
+            // Hide all views
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(view => {
+                view.classList.remove('block');
+                view.classList.add('hidden');
+            });
 
-  <svg class="links" id="links" viewBox="0 0 1600 900"></svg>
-  <div class="chip" style="top:191px"><em>X</em>Xero</div>
-  <div class="chip" style="top:313px"><em>C</em>CRM</div>
-  <div class="chip" style="top:438px"><em>S</em>Stripe</div>
-  <div class="chip" style="top:563px"><em>{}</em>Your API</div>
+            // Show selected view
+            const activeView = document.getElementById('view-' + viewName);
+            if(activeView) {
+                activeView.classList.remove('hidden');
+                activeView.classList.add('block');
+            }
 
-  <!-- Mobile phone screens remain as images per your setup -->
-  <div class="phone">
-    <div class="screen" id="screen">
-      <div class="sc" id="sc5"><img src="images/m5-pdf.png" alt="PDF is generated"></div>
-      <div class="sc" id="sc4"><img src="images/m4-summary.png" alt="Inspection summary and report"></div>
-      <div class="sc" id="sc3"><img src="images/m3-findings.png" alt="Findings: plumbing"></div>
-      <div class="sc" id="sc2"><img src="images/m2-property.png" alt="Property details"></div>
-      <div class="sc" id="sc1" style="opacity: 1;"><img src="images/m1-home.png" alt="Inspector home"></div>
-      <div class="sent" id="sent"><span>&#10003;</span><b>Report sent</b><small>PDF emailed to client<br>Dashboard updated</small></div>
-    </div>
-  </div>
+            // Update navigation styles
+            const navBtns = document.querySelectorAll('.nav-btn');
+            navBtns.forEach(btn => {
+                btn.classList.remove('nav-active', 'border-l-3', 'border-brandBlue');
+                btn.classList.add('border-l-3', 'border-transparent');
+            });
 
-  <div class="toast" id="t1"><i>+</i><div><b>New booking received</b><small>Auto-assigned to Field team A</small></div></div>
-  <div class="toast" id="t2"><i>&#9881;</i><div><b>Quote #318 auto-generated</b><small>Sent for approval</small></div></div>
-  <div class="toast" id="t3"><i>&#10003;</i><div><b>Invoice synced to Xero</b><small>No double entry</small></div></div>
-</div>
-
-<script>
-(function(){
-  var $=function(i){return document.getElementById(i)},
-      stage=$('stage'),deskView=$('desk-view'),urlBar=$('url-bar'),screen=$('screen'),sent=$('sent'),links=$('links'),
-      ln=$('ln'),area=$('area'),dot=$('live-dot'),jobs=$('jobs'),rev=$('rev'),bars=[].slice.call(document.querySelectorAll('.b'));
-
-  /* ---------- TIMELINE (seconds) ---------- */
-  var T=20; 
-
-  // 4 Desktop screens cycling throughout the story
-  var DESK_SCREENS=[
-    {id:'dsc1', url:'app.totalinspections.com.au/dashboard', fade:[-1, 0, 4.6, 5.2], scroll:[0.5, 4.2]},
-    {id:'dsc2', url:'app.totalinspections.com.au/templates', fade:[4.6, 5.2, 9.6, 10.2], scroll:[5.2, 9.2]},
-    {id:'dsc3', url:'app.totalinspections.com.au/branding',  fade:[9.6, 10.2, 14.6, 15.2], scroll:[10.2, 14.2]},
-    {id:'dsc4', url:'app.totalinspections.com.au/reports',   fade:[14.6, 15.2, 19.4, 19.9], scroll:[15.2, 18.8]}
-  ];
-
-  var SCREENS=[
-    {id:'sc1',fade:[-1,0,3.4,3.9],     scroll:[0.6,3.2]},
-    {id:'sc2',fade:[3.4,3.9,7.2,7.7],  scroll:[4.0,7.0]},
-    {id:'sc3',fade:[7.2,7.7,11.0,11.5],scroll:[7.8,10.8]},
-    {id:'sc4',fade:[11.0,11.5,14.8,15.3],scroll:[11.6,14.6]},
-    {id:'sc5',fade:[14.8,15.3,19.4,19.9],scroll:[15.4,16.9]}
-  ];
-
-  var SENT=[17.4,17.8,19.2,19.7];
-  var TOAST1=[1.7,2.0,4.4,4.8];
-  var TOAST2=[12.5,12.9,18.8,19.4];
-  var TOAST3=[17.9,18.3,19.0,19.6];
-  var GRAPH_BUILD=[0.2,3.2], GRAPH_DRAIN=[18.6,19.8];
-
-  DESK_SCREENS.forEach(function(s){s.el=$(s.id);s.wrap=s.el.querySelector('.desk-wrap');});
-  SCREENS.forEach(function(s){s.el=$(s.id);s.img=s.el.querySelector('img')});
-
-  function fit(){var s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform='translate(-50%,-50%) scale('+s+')'}
-  addEventListener('resize',fit);fit();
-
-  /* dotted connectors */
-  var NS='http://www.w3.org/2000/svg',ox=1254,oy=480,cy=[218,340,465,590],dots=[];
-  cy.forEach(function(y){
-    var l=document.createElementNS(NS,'line');
-    l.setAttribute('x1',ox);l.setAttribute('y1',oy);l.setAttribute('x2',1348);l.setAttribute('y2',y);
-    l.setAttribute('stroke','rgba(255,255,255,.28)');l.setAttribute('stroke-width','1.6');l.setAttribute('stroke-dasharray','2 6');l.setAttribute('stroke-linecap','round');
-    links.appendChild(l);
-    var e=document.createElementNS(NS,'circle');e.setAttribute('cx',1348);e.setAttribute('cy',y);e.setAttribute('r',4.5);e.setAttribute('fill','#f15b29');links.appendChild(e);
-    var d=document.createElementNS(NS,'circle');d.setAttribute('r',4);d.setAttribute('fill','#f15b29');links.appendChild(d);
-    dots.push({el:d,y:y});
-  });
-
-  /* helpers */
-  var c=function(x){return x<0?0:x>1?1:x},
-      p=function(t,a,b){return c((t-a)/(b-a))},
-      ease=function(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},
-      soft=function(x){return x*x*(3-2*x)},
-      out=function(x){return 1-Math.pow(1-x,3)},
-      win=function(t,w){return c((t-w[0])/(w[1]-w[0]))*(1-c((t-w[2])/(w[3]-w[2])))};
-  function toast(id,w,t){var a=win(t,w),e=$(id);e.style.opacity=a.toFixed(3);e.style.transform='translateY('+((1-a)*12).toFixed(1)+'px)'}
-
-  function measure(){
-    var vH = deskView.clientHeight;
-    // Calculate max scroll for coded desktop UIs based on wrapper heights vs viewport
-    DESK_SCREENS.forEach(function(s){s.max=Math.max(0,s.wrap.offsetHeight-vH)});
-    SCREENS.forEach(function(s){if(s.img)s.max=Math.max(0,s.img.offsetHeight-screen.clientHeight)});
-  }
-
-  var lineBase = [[0,44],[22,38],[44,42],[66,28],[88,32],[110,18],[132,22],[154,10],[176,14],[200,6]];
-
-  function frame(t){
-    /* 1. Desktop Coded Screens transition & simulated scroll */
-    var activeUrl = DESK_SCREENS[0].url;
-    var maxOpacity = 0;
-
-    DESK_SCREENS.forEach(function(s, i){
-      var o = win(t, s.fade);
-      if(i === 0) o = c(o + c((t - 19.4) / .6));
-      s.el.style.opacity = o.toFixed(3);
-
-      if(o > maxOpacity){ maxOpacity = o; activeUrl = s.url; }
-
-      // Scroll the coded UI slightly to simulate user scanning down the page
-      var sd = ease(p(t, s.scroll[0], s.scroll[1]));
-      s.wrap.style.transform = 'translateY(' + (-sd * s.max).toFixed(1) + 'px)';
-    });
-
-    if(urlBar.textContent !== activeUrl) urlBar.textContent = activeUrl;
-
-    /* 2. Live graph animation integrated into D1 Dashboard */
-    var v = out(p(t, GRAPH_BUILD[0], GRAPH_BUILD[1])) * (1 - ease(p(t, GRAPH_DRAIN[0], GRAPH_DRAIN[1])));
-    
-    bars.forEach(function(b, i){
-      var barScale = c(v * 1.6 - i * .09);
-      if(v > 0.8) barScale += Math.sin(t * 3 + i) * 0.03;
-      b.style.transform = 'scaleY(' + c(barScale).toFixed(3) + ')';
-    });
-
-    var currentPts = lineBase.map(function(pt, i){
-      var wave = Math.sin(t * 2.2 + i * 0.8) * 2.5 * v;
-      return [pt[0], Math.max(3, Math.min(57, pt[1] + wave))];
-    });
-
-    var pathD = 'M' + currentPts.map(function(pt){ return pt[0] + ' ' + pt[1].toFixed(1); }).join(' L');
-    var areaD = pathD + ' V60 H0 Z';
-    
-    ln.setAttribute('d', pathD);
-    area.setAttribute('d', areaD);
-    area.style.opacity = v.toFixed(3);
-
-    var endPt = currentPts[currentPts.length - 1];
-    dot.setAttribute('cx', endPt[0]);
-    dot.setAttribute('cy', endPt[1]);
-    dot.setAttribute('opacity', (v * (0.8 + Math.sin(t * 6) * 0.2)).toFixed(2));
-
-    jobs.textContent = Math.round(128 * v);
-    rev.textContent = '$' + (48.2 * v).toFixed(1) + 'k';
-
-    /* 3. Mobile screen images transition */
-    SCREENS.forEach(function(s, i){
-      var o = win(t, s.fade);
-      if(i === 0) o = c(o + c((t - 19.4) / .6));
-      s.el.style.opacity = o.toFixed(3);
-      var f = (i === 0 && t > 4) ? 0 : soft(p(t, s.scroll[0], s.scroll[1]));
-      if(s.img) s.img.style.transform = 'translateY(' + (-f * s.max).toFixed(1) + 'px)';
-    });
-    sent.style.opacity = win(t, SENT).toFixed(3);
-
-    /* 4. Toasts + connector dots */
-    toast('t1', TOAST1, t); toast('t2', TOAST2, t); toast('t3', TOAST3, t);
-    dots.forEach(function(d, i){
-      var u = ((t * .55 + i * .27) % 1);
-      d.el.setAttribute('cx', (ox + (1348 - ox) * u).toFixed(1));
-      d.el.setAttribute('cy', (oy + (d.y - oy) * u).toFixed(1));
-      d.el.setAttribute('opacity', Math.sin(u * Math.PI).toFixed(2));
-    });
-  }
-
-  var still = matchMedia('(prefers-reduced-motion: reduce)').matches, t0 = 0;
-  function restart(){t0 = performance.now()}
-  function tick(now){
-    frame(still ? 5 : ((now - t0) / 1000) % T);
-    requestAnimationFrame(tick);
-  }
-
-  measure();
-  restart();
-  requestAnimationFrame(tick);
-
-  var allImgs = SCREENS.map(function(s){return s.img});
-  allImgs.forEach(function(im){
-    if(im && !im.complete) im.onload = measure;
-  });
-  addEventListener('resize', measure);
-
-})();
-</script>
+            const activeNav = document.getElementById('nav-' + viewName);
+            if(activeNav) {
+                activeNav.classList.remove('border-transparent');
+                activeNav.classList.add('nav-active');
+            }
+        }
+    </script>
 </body>
 </html>
