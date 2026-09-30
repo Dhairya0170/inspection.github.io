@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#162b33;--orange:#f15b29;--green:#3fb37f;--app-bg:#f4f7f9;--border:#e2e8f0;--text:#14213d;--text-light:#6b7686;--body:"Manrope","Segoe UI",system-ui,sans-serif}
+:root{color-scheme:dark;--bg:#162b33;--orange:#f15b29;--green:#3fb37f;--app-bg:#f4f7f9;--text:#14213d;--text-light:#6b7686;--body:"Manrope","Segoe UI",system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;background:var(--bg);cursor:none}
 
@@ -26,65 +26,13 @@ html,body{height:100%;overflow:hidden;background:var(--bg);cursor:none}
 .bar{height:34px;background:#eceff3;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid #d9dee5;z-index:10;position:relative}
 .bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
 .bar i:nth-child(2){background:#febc2e}.bar i:nth-child(3){background:#28c840}
-.url{flex:1;margin-left:14px;height:20px;border-radius:10px;background:#fff;color:var(--text-light);font-size:11px;line-height:20px;padding:0 12px;transition:all 0.3s ease}
+.url{flex:1;margin-left:14px;height:20px;border-radius:10px;background:#fff;color:var(--text-light);font-size:11px;line-height:20px;padding:0 12px}
 .view{height:669px;overflow:hidden;position:relative;background:var(--app-bg)}
 
-/* --- CODED DESKTOP UI APP STYLES --- */
-.desk-sc{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;opacity:0;will-change:opacity}
-.desk-wrap{width:100%;height:860px;position:relative;will-change:transform} /* Taller than view to allow scroll */
-
-.app{display:flex;height:100%;width:100%;background:var(--app-bg);color:var(--text)}
-.sidebar{width:220px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column}
-.sb-logo{height:60px;display:flex;align-items:center;padding:0 24px;font-weight:700;font-size:16px;border-bottom:1px solid var(--border);color:var(--bg)}
-.sb-nav{padding:20px 12px;display:flex;flex-direction:column;gap:4px}
-.nav-item{padding:10px 12px;border-radius:6px;color:var(--text-light);font-size:13px;font-weight:600;display:flex;align-items:center;gap:12px}
-.nav-item.active{background:rgba(241,91,41,.1);color:var(--orange)}
-.nav-icon{width:16px;height:16px;border-radius:3px;background:currentColor;opacity:0.8}
-
-.main{flex:1;display:flex;flex-direction:column}
-.header{height:60px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 32px;justify-content:space-between}
-.header h1{font-size:18px;font-weight:700;margin:0}
-.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--bg)}
-
-.content{padding:32px;display:flex;flex-direction:column;gap:24px}
-.card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px;box-shadow:0 4px 12px rgba(0,0,0,.02)}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-
-/* D1: Dashboard Native Graph Layout */
-.dash-stats{display:flex;gap:24px}
-.stat-box{flex:1;background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px}
-.stat-box small{font-size:12px;color:var(--text-light);font-weight:600}
-.stat-box b{font-size:28px;line-height:1;font-weight:700}
-.stat-box.highlight b{color:var(--orange)}
-
-.graph-container{display:flex;align-items:flex-end;gap:20px;height:180px;margin-top:10px}
-.bar-chart{flex:1;height:100%}
-.line-chart{flex:1.5;height:100%}
-svg{width:100%;height:100%;overflow:visible}
-.b{fill:#0b57a4;transform-box:fill-box;transform-origin:50% 100%;transition:transform 0.1s ease-out}
-.b.hot{fill:var(--orange)}
-.line{fill:none;stroke:var(--orange);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
-
-/* D2: Templates List */
-.tpl-row{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--border)}
-.tpl-row:last-child{border-bottom:none}
-.tpl-info h4{font-size:14px;margin-bottom:4px}
-.tpl-info p{font-size:12px;color:var(--text-light)}
-.badge{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;background:#eef2f6;color:var(--text-light)}
-.badge.active{background:rgba(63,179,127,.15);color:var(--green)}
-
-/* D3: Branding Form */
-.form-group{margin-bottom:20px}
-.form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:8px;color:var(--text-light)}
-.input{width:100%;height:40px;border:1px solid var(--border);border-radius:6px;background:#f8fafc;padding:0 12px;font-family:inherit;font-size:14px}
-.color-picker{display:flex;gap:12px}
-.color-swatch{width:40px;height:40px;border-radius:6px;border:2px solid #fff;box-shadow:0 0 0 1px var(--border)}
-
-/* D4: Reports Table */
-.table{width:100%;border-collapse:collapse}
-.table th{text-align:left;padding:12px 16px;font-size:12px;color:var(--text-light);border-bottom:1px solid var(--border)}
-.table td{padding:16px;font-size:13px;font-weight:500;border-bottom:1px solid var(--border)}
+/* desktop screenshots */
+.dsc{position:absolute;inset:0;overflow:hidden;opacity:0;background:var(--app-bg)}
+.dclip{overflow:hidden;width:100%}
+.dsc img{display:block;width:100%;height:auto;will-change:transform}
 
 /* integrations */
 .links{position:absolute;inset:0;width:1600px;height:900px;pointer-events:none}
@@ -121,186 +69,11 @@ svg{width:100%;height:100%;overflow:visible}
 
   <div class="win">
     <div class="bar"><i></i><i></i><i></i><div class="url" id="url-bar">app.totalinspections.com.au/dashboard</div></div>
-    
     <div class="view" id="desk-view">
-      
-      <!-- SCREEN 4: REPORTS ARCHIVE -->
-      <div class="desk-sc" id="dsc4">
-        <div class="desk-wrap">
-          <div class="app">
-            <div class="sidebar">
-              <div class="sb-logo">Total Inspections</div>
-              <div class="sb-nav">
-                <div class="nav-item"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
-                <div class="nav-item"><div class="nav-icon"></div> Templates</div>
-                <div class="nav-item"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
-                <div class="nav-item active"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
-              </div>
-            </div>
-            <div class="main">
-              <div class="header"><h1>Inspection Archive</h1><div class="user-avatar"></div></div>
-              <div class="content">
-                <div class="card" style="padding:0">
-                  <table class="table">
-                    <thead><tr><th>Date</th><th>Property Address</th><th>Inspector</th><th>Status</th></tr></thead>
-                    <tbody>
-                      <tr><td>Today, 09:30 AM</td><td>42 Riverside Drive, Brisbane</td><td>John S.</td><td><span class="badge active">Completed</span></td></tr>
-                      <tr><td>Yesterday</td><td>180 Smith Street, Melbourne</td><td>Mike T.</td><td><span class="badge active">Completed</span></td></tr>
-                      <tr><td>12 Oct 2023</td><td>8/15 Ocean View, Sydney</td><td>Sarah J.</td><td><span class="badge">Pending</span></td></tr>
-                      <tr><td>11 Oct 2023</td><td>9021 High Road, Perth</td><td>John S.</td><td><span class="badge active">Completed</span></td></tr>
-                      <tr><td>10 Oct 2023</td><td>23 Valley Court, Adelaide</td><td>Mike T.</td><td><span class="badge active">Completed</span></td></tr>
-                      <tr><td>08 Oct 2023</td><td>77 Park Avenue, Brisbane</td><td>Sarah J.</td><td><span class="badge active">Completed</span></td></tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SCREEN 3: BRANDING -->
-      <div class="desk-sc" id="dsc3">
-        <div class="desk-wrap">
-          <div class="app">
-            <div class="sidebar">
-              <div class="sb-logo">Total Inspections</div>
-              <div class="sb-nav">
-                <div class="nav-item"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
-                <div class="nav-item"><div class="nav-icon"></div> Templates</div>
-                <div class="nav-item active"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
-                <div class="nav-item"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
-              </div>
-            </div>
-            <div class="main">
-              <div class="header"><h1>Branding Identity</h1><div class="user-avatar"></div></div>
-              <div class="content">
-                <div class="grid-2">
-                  <div class="card">
-                    <h3 style="margin-bottom:20px;font-size:15px">Global Settings</h3>
-                    <div class="form-group">
-                      <label>Company Name</label>
-                      <div class="input" style="line-height:40px;color:#14213d">Total Inspections AU</div>
-                    </div>
-                    <div class="form-group">
-                      <label>Report Accent Colors</label>
-                      <div class="color-picker">
-                        <div class="color-swatch" style="background:var(--orange)"></div>
-                        <div class="color-swatch" style="background:#162b33"></div>
-                        <div class="color-swatch" style="background:var(--green)"></div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="card" style="display:flex;align-items:center;justify-content:center;background:#f8fafc;border:2px dashed var(--border)">
-                    <div style="text-align:center;color:var(--text-light)">
-                      <div style="font-size:24px;margin-bottom:8px">☁️</div>
-                      <b>Upload Logo</b><br><small>PNG or SVG (Max 2MB)</small>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SCREEN 2: TEMPLATES -->
-      <div class="desk-sc" id="dsc2">
-        <div class="desk-wrap">
-          <div class="app">
-            <div class="sidebar">
-              <div class="sb-logo">Total Inspections</div>
-              <div class="sb-nav">
-                <div class="nav-item"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
-                <div class="nav-item active"><div class="nav-icon"></div> Templates</div>
-                <div class="nav-item"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
-                <div class="nav-item"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
-              </div>
-            </div>
-            <div class="main">
-              <div class="header"><h1>Template Management</h1><div class="user-avatar"></div></div>
-              <div class="content">
-                <div class="card" style="padding:0">
-                  <div class="tpl-row">
-                    <div class="tpl-info"><h4>Residential Pre-Purchase</h4><p>Standard building inspection framework</p></div>
-                    <span class="badge active">Active</span>
-                  </div>
-                  <div class="tpl-row">
-                    <div class="tpl-info"><h4>Timber & Pest Inspection</h4><p>AS 4349.3 compliant formatting</p></div>
-                    <span class="badge active">Active</span>
-                  </div>
-                  <div class="tpl-row">
-                    <div class="tpl-info"><h4>Commercial Dilapidation</h4><p>Pre-construction condition report</p></div>
-                    <span class="badge">Draft</span>
-                  </div>
-                  <div class="tpl-row">
-                    <div class="tpl-info"><h4>Pool Safety Certification</h4><p>Barrier and fence compliance checklist</p></div>
-                    <span class="badge active">Active</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SCREEN 1: DASHBOARD (Active natively with animated SVG) -->
-      <div class="desk-sc" id="dsc1" style="opacity: 1;">
-        <div class="desk-wrap">
-          <div class="app">
-            <div class="sidebar">
-              <div class="sb-logo">Total Inspections</div>
-              <div class="sb-nav">
-                <div class="nav-item active"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
-                <div class="nav-item"><div class="nav-icon"></div> Templates</div>
-                <div class="nav-item"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
-                <div class="nav-item"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
-              </div>
-            </div>
-            <div class="main">
-              <div class="header"><h1>Dashboard Overview</h1><div class="user-avatar"></div></div>
-              <div class="content">
-                <div class="dash-stats">
-                  <div class="stat-box highlight"><small>Jobs Completed</small><b id="jobs">0</b></div>
-                  <div class="stat-box"><small>Revenue (MTD)</small><b id="rev">$0.0k</b></div>
-                  <div class="stat-box"><small>Active Field Teams</small><b style="color:var(--text)">4</b></div>
-                </div>
-                
-                <div class="card">
-                  <h3 style="margin-bottom:16px;font-size:15px;color:var(--text)">Performance Metrics</h3>
-                  <div class="graph-container">
-                    <div class="bar-chart">
-                      <svg viewBox="0 0 138 60" aria-hidden="true">
-                        <rect class="b" x="0"   width="14" y="33" height="27" rx="2"/>
-                        <rect class="b" x="20"  width="14" y="22" height="38" rx="2"/>
-                        <rect class="b" x="40"  width="14" y="35" height="25" rx="2"/>
-                        <rect class="b" x="60"  width="14" y="17" height="43" rx="2"/>
-                        <rect class="b" x="80"  width="14" y="25" height="35" rx="2"/>
-                        <rect class="b hot" x="100" width="14" y="6" height="54" rx="2"/>
-                        <rect class="b" x="120" width="14" y="30" height="30" rx="2"/>
-                      </svg>
-                    </div>
-                    <div class="line-chart">
-                      <svg viewBox="0 0 200 60" aria-hidden="true" preserveAspectRatio="none">
-                        <defs>
-                          <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0" stop-color="#f15b29" stop-opacity=".35"/>
-                            <stop offset="1" stop-color="#f15b29" stop-opacity="0"/>
-                          </linearGradient>
-                        </defs>
-                        <path id="area" fill="url(#fill)"/>
-                        <path id="ln" class="line"/>
-                        <circle id="live-dot" r="3.5" fill="#f15b29"/>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <div class="dsc" id="dsc4"><div class="dclip"><img src="images/d4.png" alt="Reports archive"></div></div>
+      <div class="dsc" id="dsc3"><div class="dclip"><img src="images/d3.png" alt="Branding identity"></div></div>
+      <div class="dsc" id="dsc2"><div class="dclip"><img src="images/d2.png" alt="Template management"></div></div>
+      <div class="dsc" id="dsc1" style="opacity:1"><div class="dclip"><img src="images/d1.png" alt="Dashboard overview"></div></div>
     </div>
   </div>
 
@@ -310,14 +83,13 @@ svg{width:100%;height:100%;overflow:visible}
   <div class="chip" style="top:438px"><em>S</em>Stripe</div>
   <div class="chip" style="top:563px"><em>{}</em>Your API</div>
 
-  <!-- Mobile phone screens remain as images per your setup -->
   <div class="phone">
     <div class="screen" id="screen">
       <div class="sc" id="sc5"><img src="images/m5-pdf.png" alt="PDF is generated"></div>
       <div class="sc" id="sc4"><img src="images/m4-summary.png" alt="Inspection summary and report"></div>
       <div class="sc" id="sc3"><img src="images/m3-findings.png" alt="Findings: plumbing"></div>
       <div class="sc" id="sc2"><img src="images/m2-property.png" alt="Property details"></div>
-      <div class="sc" id="sc1" style="opacity: 1;"><img src="images/m1-home.png" alt="Inspector home"></div>
+      <div class="sc" id="sc1" style="opacity:1"><img src="images/m1-home.png" alt="Inspector home"></div>
       <div class="sent" id="sent"><span>&#10003;</span><b>Report sent</b><small>PDF emailed to client<br>Dashboard updated</small></div>
     </div>
   </div>
@@ -330,20 +102,21 @@ svg{width:100%;height:100%;overflow:visible}
 <script>
 (function(){
   var $=function(i){return document.getElementById(i)},
-      stage=$('stage'),deskView=$('desk-view'),urlBar=$('url-bar'),screen=$('screen'),sent=$('sent'),links=$('links'),
-      ln=$('ln'),area=$('area'),dot=$('live-dot'),jobs=$('jobs'),rev=$('rev'),bars=[].slice.call(document.querySelectorAll('.b'));
+      stage=$('stage'),deskView=$('desk-view'),urlBar=$('url-bar'),screen=$('screen'),sent=$('sent'),links=$('links');
 
-  /* ---------- TIMELINE (seconds) ---------- */
-  var T=20; 
+  /* ---------- TIMELINE (seconds) — desktop + phone share ONE clock, both start at t=0 ---------- */
+  var T=20;
 
-  // 4 Desktop screens cycling throughout the story
-  var DESK_SCREENS=[
-    {id:'dsc1', url:'app.totalinspections.com.au/dashboard', fade:[-1, 0, 4.6, 5.2], scroll:[0.5, 4.2]},
-    {id:'dsc2', url:'app.totalinspections.com.au/templates', fade:[4.6, 5.2, 9.6, 10.2], scroll:[5.2, 9.2]},
-    {id:'dsc3', url:'app.totalinspections.com.au/branding',  fade:[9.6, 10.2, 14.6, 15.2], scroll:[10.2, 14.2]},
-    {id:'dsc4', url:'app.totalinspections.com.au/reports',   fade:[14.6, 15.2, 19.4, 19.9], scroll:[15.2, 18.8]}
+  /* Desktop: 4 screens, even 5s split. crop = fraction of the image height that has real
+     content (d4.png has blank white space at the bottom, so it is trimmed here). */
+  var DESK=[
+    {id:'dsc1',url:'app.totalinspections.com.au/dashboard',fade:[-1,0,4.6,5.2],   scroll:[0.5,4.2],   crop:1},
+    {id:'dsc2',url:'app.totalinspections.com.au/templates',fade:[4.6,5.2,9.6,10.2],scroll:[5.2,9.2],   crop:1},
+    {id:'dsc3',url:'app.totalinspections.com.au/branding', fade:[9.6,10.2,14.6,15.2],scroll:[10.2,14.2],crop:1},
+    {id:'dsc4',url:'app.totalinspections.com.au/reports',  fade:[14.6,15.2,19.4,19.9],scroll:[15.2,18.8],crop:0.72}
   ];
 
+  /* Phone */
   var SCREENS=[
     {id:'sc1',fade:[-1,0,3.4,3.9],     scroll:[0.6,3.2]},
     {id:'sc2',fade:[3.4,3.9,7.2,7.7],  scroll:[4.0,7.0]},
@@ -356,9 +129,8 @@ svg{width:100%;height:100%;overflow:visible}
   var TOAST1=[1.7,2.0,4.4,4.8];
   var TOAST2=[12.5,12.9,18.8,19.4];
   var TOAST3=[17.9,18.3,19.0,19.6];
-  var GRAPH_BUILD=[0.2,3.2], GRAPH_DRAIN=[18.6,19.8];
 
-  DESK_SCREENS.forEach(function(s){s.el=$(s.id);s.wrap=s.el.querySelector('.desk-wrap');});
+  DESK.forEach(function(s){s.el=$(s.id);s.clip=s.el.querySelector('.dclip');s.img=s.el.querySelector('img')});
   SCREENS.forEach(function(s){s.el=$(s.id);s.img=s.el.querySelector('img')});
 
   function fit(){var s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform='translate(-50%,-50%) scale('+s+')'}
@@ -381,104 +153,68 @@ svg{width:100%;height:100%;overflow:visible}
       p=function(t,a,b){return c((t-a)/(b-a))},
       ease=function(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},
       soft=function(x){return x*x*(3-2*x)},
-      out=function(x){return 1-Math.pow(1-x,3)},
       win=function(t,w){return c((t-w[0])/(w[1]-w[0]))*(1-c((t-w[2])/(w[3]-w[2])))};
   function toast(id,w,t){var a=win(t,w),e=$(id);e.style.opacity=a.toFixed(3);e.style.transform='translateY('+((1-a)*12).toFixed(1)+'px)'}
 
   function measure(){
-    var vH = deskView.clientHeight;
-    // Calculate max scroll for coded desktop UIs based on wrapper heights vs viewport
-    DESK_SCREENS.forEach(function(s){s.max=Math.max(0,s.wrap.offsetHeight-vH)});
-    SCREENS.forEach(function(s){if(s.img)s.max=Math.max(0,s.img.offsetHeight-screen.clientHeight)});
+    var vH=deskView.clientHeight;
+    DESK.forEach(function(s){
+      var vis=s.img.offsetHeight*s.crop;          /* visible content height */
+      if(vis>0) s.clip.style.height=vis+'px';     /* trims blank space (d4) */
+      s.max=Math.max(0,vis-vH);
+    });
+    SCREENS.forEach(function(s){s.max=Math.max(0,s.img.offsetHeight-screen.clientHeight)});
   }
-
-  var lineBase = [[0,44],[22,38],[44,42],[66,28],[88,32],[110,18],[132,22],[154,10],[176,14],[200,6]];
 
   function frame(t){
-    /* 1. Desktop Coded Screens transition & simulated scroll */
-    var activeUrl = DESK_SCREENS[0].url;
-    var maxOpacity = 0;
-
-    DESK_SCREENS.forEach(function(s, i){
-      var o = win(t, s.fade);
-      if(i === 0) o = c(o + c((t - 19.4) / .6));
-      s.el.style.opacity = o.toFixed(3);
-
-      if(o > maxOpacity){ maxOpacity = o; activeUrl = s.url; }
-
-      // Scroll the coded UI slightly to simulate user scanning down the page
-      var sd = ease(p(t, s.scroll[0], s.scroll[1]));
-      s.wrap.style.transform = 'translateY(' + (-sd * s.max).toFixed(1) + 'px)';
+    /* desktop screens */
+    var activeUrl=DESK[0].url,maxO=0;
+    DESK.forEach(function(s,i){
+      var o=win(t,s.fade);
+      if(i===0) o=c(o+c((t-19.4)/.6));            /* smooth wrap back to screen 1 */
+      s.el.style.opacity=o.toFixed(3);
+      if(o>maxO){maxO=o;activeUrl=s.url}
+      var f=(i===0&&t>5.2)?0:ease(p(t,s.scroll[0],s.scroll[1]));   /* reset while hidden */
+      s.img.style.transform='translateY('+(-f*(s.max||0)).toFixed(1)+'px)';
     });
+    if(urlBar.textContent!==activeUrl) urlBar.textContent=activeUrl;
 
-    if(urlBar.textContent !== activeUrl) urlBar.textContent = activeUrl;
-
-    /* 2. Live graph animation integrated into D1 Dashboard */
-    var v = out(p(t, GRAPH_BUILD[0], GRAPH_BUILD[1])) * (1 - ease(p(t, GRAPH_DRAIN[0], GRAPH_DRAIN[1])));
-    
-    bars.forEach(function(b, i){
-      var barScale = c(v * 1.6 - i * .09);
-      if(v > 0.8) barScale += Math.sin(t * 3 + i) * 0.03;
-      b.style.transform = 'scaleY(' + c(barScale).toFixed(3) + ')';
+    /* phone screens */
+    SCREENS.forEach(function(s,i){
+      var o=win(t,s.fade);
+      if(i===0) o=c(o+c((t-19.4)/.6));
+      s.el.style.opacity=o.toFixed(3);
+      var f=(i===0&&t>4)?0:soft(p(t,s.scroll[0],s.scroll[1]));
+      s.img.style.transform='translateY('+(-f*(s.max||0)).toFixed(1)+'px)';
     });
+    sent.style.opacity=win(t,SENT).toFixed(3);
 
-    var currentPts = lineBase.map(function(pt, i){
-      var wave = Math.sin(t * 2.2 + i * 0.8) * 2.5 * v;
-      return [pt[0], Math.max(3, Math.min(57, pt[1] + wave))];
-    });
-
-    var pathD = 'M' + currentPts.map(function(pt){ return pt[0] + ' ' + pt[1].toFixed(1); }).join(' L');
-    var areaD = pathD + ' V60 H0 Z';
-    
-    ln.setAttribute('d', pathD);
-    area.setAttribute('d', areaD);
-    area.style.opacity = v.toFixed(3);
-
-    var endPt = currentPts[currentPts.length - 1];
-    dot.setAttribute('cx', endPt[0]);
-    dot.setAttribute('cy', endPt[1]);
-    dot.setAttribute('opacity', (v * (0.8 + Math.sin(t * 6) * 0.2)).toFixed(2));
-
-    jobs.textContent = Math.round(128 * v);
-    rev.textContent = '$' + (48.2 * v).toFixed(1) + 'k';
-
-    /* 3. Mobile screen images transition */
-    SCREENS.forEach(function(s, i){
-      var o = win(t, s.fade);
-      if(i === 0) o = c(o + c((t - 19.4) / .6));
-      s.el.style.opacity = o.toFixed(3);
-      var f = (i === 0 && t > 4) ? 0 : soft(p(t, s.scroll[0], s.scroll[1]));
-      if(s.img) s.img.style.transform = 'translateY(' + (-f * s.max).toFixed(1) + 'px)';
-    });
-    sent.style.opacity = win(t, SENT).toFixed(3);
-
-    /* 4. Toasts + connector dots */
-    toast('t1', TOAST1, t); toast('t2', TOAST2, t); toast('t3', TOAST3, t);
-    dots.forEach(function(d, i){
-      var u = ((t * .55 + i * .27) % 1);
-      d.el.setAttribute('cx', (ox + (1348 - ox) * u).toFixed(1));
-      d.el.setAttribute('cy', (oy + (d.y - oy) * u).toFixed(1));
-      d.el.setAttribute('opacity', Math.sin(u * Math.PI).toFixed(2));
+    /* toasts + connector dots */
+    toast('t1',TOAST1,t);toast('t2',TOAST2,t);toast('t3',TOAST3,t);
+    dots.forEach(function(d,i){
+      var u=((t*.55+i*.27)%1);
+      d.el.setAttribute('cx',(ox+(1348-ox)*u).toFixed(1));
+      d.el.setAttribute('cy',(oy+(d.y-oy)*u).toFixed(1));
+      d.el.setAttribute('opacity',Math.sin(u*Math.PI).toFixed(2));
     });
   }
 
-  var still = matchMedia('(prefers-reduced-motion: reduce)').matches, t0 = 0;
-  function restart(){t0 = performance.now()}
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches,t0=performance.now();
   function tick(now){
-    frame(still ? 5 : ((now - t0) / 1000) % T);
+    frame(still?5:((now-t0)/1000)%T);
     requestAnimationFrame(tick);
   }
 
-  measure();
-  restart();
-  requestAnimationFrame(tick);
-
-  var allImgs = SCREENS.map(function(s){return s.img});
-  allImgs.forEach(function(im){
-    if(im && !im.complete) im.onload = measure;
+  /* start the shared clock only once every screenshot is ready, so desktop + phone begin together at t=0 */
+  var imgs=[].slice.call(document.querySelectorAll('.dsc img,.sc img')),pending=imgs.length;
+  function ready(){
+    if(--pending>0) return;
+    measure();t0=performance.now();requestAnimationFrame(tick);
+  }
+  imgs.forEach(function(im){
+    if(im.complete) ready(); else {im.onload=ready;im.onerror=ready}
   });
-  addEventListener('resize', measure);
-
+  addEventListener('resize',measure);
 })();
 </script>
 </body>
