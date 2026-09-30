@@ -31,16 +31,16 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 .desk{width:100%;position:relative;container-type:inline-size;will-change:transform}
 .desk>img{display:block;width:100%;height:auto}
 
-/* live graph in the dashboard's empty bottom strip */
+/* live graph overlay in dashboard */
 .graph{position:absolute;left:25%;top:88%;width:47.4%;height:10.6%;background:#fff;border-radius:2.4cqw;box-shadow:0 .8cqw 3cqw rgba(15,40,90,.16);
   display:grid;grid-template-columns:27% 31% 1fr;align-items:center;gap:1.6cqw;padding:0 2.4cqw;color:#14213d}
 .g-stats{display:grid;gap:.9cqw}
 .g-stats small{display:block;font-size:1.05cqw;color:#6b7686;font-weight:500;line-height:1.1}
 .g-stats b{display:block;font-size:3cqw;line-height:1.05;font-weight:700;letter-spacing:-.02em}
 .graph svg{width:100%;height:76%;display:block;overflow:visible}
-.b{fill:#0b57a4;transform-box:fill-box;transform-origin:50% 100%}
+.b{fill:#0b57a4;transform-box:fill-box;transform-origin:50% 100%;transition:transform 0.1s ease-out}
 .b.hot{fill:var(--orange)}
-.line{fill:none;stroke:var(--orange);stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.line{fill:none;stroke:var(--orange);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
 
 /* integrations */
 .links{position:absolute;inset:0;width:1600px;height:900px;pointer-events:none}
@@ -55,7 +55,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 .screen{flex:1;border-radius:30px;overflow:hidden;background:#dde7f5;position:relative}
 .sc{position:absolute;inset:0;overflow:hidden;opacity:0;background:#dde7f5}
 
-/* ZOOM IN MODIFICATION: 108% width zooms in slightly to eliminate excess side padding */
+/* ZOOM IN MODIFICATION: 108% width for a slight zoom */
 .sc img{display:block;width:108%;margin-left:-4%;height:auto;will-change:transform}
 
 .sent{position:absolute;inset:0;background:rgba(9,25,38,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;opacity:0}
@@ -97,9 +97,15 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
             <rect class="b" x="120" width="14" y="30" height="30" rx="2"/>
           </svg>
           <svg viewBox="0 0 200 60" aria-hidden="true">
-            <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f15b29" stop-opacity=".28"/><stop offset="1" stop-color="#f15b29" stop-opacity="0"/></linearGradient></defs>
-            <path id="area" d="M0 44 22 38 44 42 66 28 88 32 110 18 132 22 154 10 176 14 200 4V60H0Z" fill="url(#fill)"/>
-            <path id="ln" class="line" pathLength="1" d="M0 44 22 38 44 42 66 28 88 32 110 18 132 22 154 10 176 14 200 4"/>
+            <defs>
+              <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#f15b29" stop-opacity=".35"/>
+                <stop offset="1" stop-color="#f15b29" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path id="area" fill="url(#fill)"/>
+            <path id="ln" class="line"/>
+            <circle id="live-dot" r="3.5" fill="#f15b29"/>
           </svg>
         </div>
       </div>
@@ -114,7 +120,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 
   <div class="phone">
     <div class="screen" id="screen">
-      <!-- later screens first, home screen on top so it can fade back in at the loop end -->
+      <!-- home screen rendered visible initially so desktop and mobile start immediately together -->
       <div class="sc" id="sc5"><img src="images/m5-pdf.png" alt="PDF is generated"></div>
       <div class="sc" id="sc4"><img src="images/m4-summary.png" alt="Inspection summary and report"></div>
       <div class="sc" id="sc3"><img src="images/m3-findings.png" alt="Findings: plumbing"></div>
@@ -133,11 +139,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 (function(){
   var $=function(i){return document.getElementById(i)},
       stage=$('stage'),desk=$('desk'),deskimg=$('deskimg'),screen=$('screen'),sent=$('sent'),links=$('links'),
-      ln=$('ln'),area=$('area'),jobs=$('jobs'),rev=$('rev'),bars=[].slice.call(document.querySelectorAll('.b'));
+      ln=$('ln'),area=$('area'),dot=$('live-dot'),jobs=$('jobs'),rev=$('rev'),bars=[].slice.call(document.querySelectorAll('.b'));
 
-  /* ---------- TIMELINE (seconds). Edit these numbers to change timing. ---------- */
+  /* ---------- TIMELINE (seconds) ---------- */
   var T=20; // total loop length
-  // fade = [fadeInStart, fadeInEnd, fadeOutStart, fadeOutEnd]   scroll = [scrollStart, scrollEnd]
   var SCREENS=[
     {id:'sc1',fade:[-1,0,3.4,3.9],     scroll:[0.6,3.2]},   // home
     {id:'sc2',fade:[3.4,3.9,7.2,7.7],  scroll:[4.0,7.0]},   // property
@@ -150,9 +155,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
   var TOAST2=[12.5,12.9,18.8,19.4];               // Quote #318 auto-generated
   var TOAST3=[17.9,18.3,19.0,19.6];               // Invoice synced to Xero
   var DESK_DOWN=[0.5,3.4], DESK_UP=[18.4,19.7];   // dashboard scroll
-  var GRAPH_BUILD=[3.2,5.2], GRAPH_DRAIN=[18.6,19.8];
+  var GRAPH_BUILD=[0.2,3.2], GRAPH_DRAIN=[18.6,19.8];
 
-  screens=SCREENS.forEach(function(s){s.el=$(s.id);s.img=s.el.querySelector('img')});
+  SCREENS.forEach(function(s){s.el=$(s.id);s.img=s.el.querySelector('img')});
 
   function fit(){var s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform='translate(-50%,-50%) scale('+s+')'}
   addEventListener('resize',fit);fit();
@@ -173,7 +178,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
   var c=function(x){return x<0?0:x>1?1:x},
       p=function(t,a,b){return c((t-a)/(b-a))},
       ease=function(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},   // dashboard
-      soft=function(x){return x*x*(3-2*x)},                            // phone scrolling (gentler)
+      soft=function(x){return x*x*(3-2*x)},                            // phone scrolling
       out=function(x){return 1-Math.pow(1-x,3)},
       win=function(t,w){return c((t-w[0])/(w[1]-w[0]))*(1-c((t-w[2])/(w[3]-w[2])))};
   function toast(id,w,t){var a=win(t,w),e=$(id);e.style.opacity=a.toFixed(3);e.style.transform='translateY('+((1-a)*12).toFixed(1)+'px)'}
@@ -184,19 +189,50 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
     SCREENS.forEach(function(s){s.max=Math.max(0,s.img.offsetHeight-screen.clientHeight)});
   }
 
+  // Base path coordinates for desktop live graph
+  var lineBase = [[0,44],[22,38],[44,42],[66,28],[88,32],[110,18],[132,22],[154,10],[176,14],[200,6]];
+
   function frame(t){
     /* dashboard scroll + graph */
     var sd=ease(p(t,DESK_DOWN[0],DESK_DOWN[1]))-ease(p(t,DESK_UP[0],DESK_UP[1]));
     desk.style.transform='translateY('+(-sd*maxD).toFixed(1)+'px)';
+    
     var v=out(p(t,GRAPH_BUILD[0],GRAPH_BUILD[1]))*(1-ease(p(t,GRAPH_DRAIN[0],GRAPH_DRAIN[1])));
-    bars.forEach(function(b,i){b.style.transform='scaleY('+c(v*1.6-i*.09).toFixed(3)+')'});
-    ln.style.strokeDasharray='1';ln.style.strokeDashoffset=(1-v).toFixed(3);area.style.opacity=v.toFixed(3);
-    jobs.textContent=Math.round(128*v);rev.textContent='$'+(48.2*v).toFixed(1)+'k';
+    
+    // Animate bars
+    bars.forEach(function(b,i){
+      var barScale = c(v*1.6 - i*.09);
+      // add subtle live breathing animation to bars
+      if(v > 0.8) barScale += Math.sin(t*3 + i)*0.03;
+      b.style.transform='scaleY('+c(barScale).toFixed(3)+')';
+    });
+
+    // Animate line graph continuously with smooth live wave effect
+    var currentPts = lineBase.map(function(pt, i){
+      var wave = Math.sin(t * 2.2 + i * 0.8) * 2.5 * v;
+      return [pt[0], Math.max(3, Math.min(57, pt[1] + wave))];
+    });
+
+    var pathD = 'M' + currentPts.map(function(pt){ return pt[0] + ' ' + pt[1].toFixed(1); }).join(' L');
+    var areaD = pathD + ' V60 H0 Z';
+    
+    ln.setAttribute('d', pathD);
+    area.setAttribute('d', areaD);
+    area.style.opacity = v.toFixed(3);
+
+    var endPt = currentPts[currentPts.length - 1];
+    dot.setAttribute('cx', endPt[0]);
+    dot.setAttribute('cy', endPt[1]);
+    dot.setAttribute('opacity', (v * (0.8 + Math.sin(t * 6) * 0.2)).toFixed(2));
+
+    // Stats count animation
+    jobs.textContent = Math.round(128 * v);
+    rev.textContent = '$' + (48.2 * v).toFixed(1) + 'k';
 
     /* phone screens */
     SCREENS.forEach(function(s,i){
       var o=win(t,s.fade);
-      if(i===0)o=c(o+c((t-19.4)/.6));                       // home fades back in for a seamless loop
+      if(i===0) o=c(o+c((t-19.4)/.6));                       // home fades back in for seamless loop
       s.el.style.opacity=o.toFixed(3);
       var f=(i===0&&t>4)?0:soft(p(t,s.scroll[0],s.scroll[1]));
       s.img.style.transform='translateY('+(-f*s.max).toFixed(1)+'px)';
@@ -213,16 +249,23 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
     });
   }
 
-  var still=matchMedia('(prefers-reduced-motion: reduce)').matches,t0=0;
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches, t0=0;
   function restart(){t0=performance.now()}
-  function tick(now){frame(still?5:((now-t0)/1000)%T);requestAnimationFrame(tick)}
-  function go(){measure();restart();requestAnimationFrame(tick)}
+  function tick(now){
+    frame(still?5:((now-t0)/1000)%T);
+    requestAnimationFrame(tick);
+  }
 
-  /* wait for every image so scroll distances are measured correctly */
+  // START IMMEDIATELY so both mobile and desktop screens animate together from t = 0
+  measure();
+  restart();
+  requestAnimationFrame(tick);
+
+  // Recalculate heights once image assets finish loading in background
   var imgs=[deskimg].concat(SCREENS.map(function(s){return s.img}));
-  Promise.all(imgs.map(function(im){
-    return new Promise(function(res){if(im.complete)res();else{im.onload=res;im.onerror=res}});
-  })).then(go);
+  imgs.forEach(function(im){
+    if(!im.complete) im.onload = measure;
+  });
   addEventListener('resize',measure);
 
   document.addEventListener('keydown',function(e){
