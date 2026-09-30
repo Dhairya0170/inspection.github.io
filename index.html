@@ -78,7 +78,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
     <div class="bar"><i></i><i></i><i></i><div class="url">app.totalinspections.com.au/dashboard</div></div>
     <div class="view">
       <div class="desk" id="desk">
-        <img id="deskimg" src="images/dashboard.jpg" alt="Total Inspections admin dashboard">
+        <img id="deskimg" src="images/dashboard.png" alt="Total Inspections admin dashboard">
         <div class="graph">
           <div class="g-stats">
             <div><small>Jobs completed</small><b id="jobs">0</b></div>
@@ -112,11 +112,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
   <div class="phone">
     <div class="screen" id="screen">
       <!-- later screens first, home screen on top so it can fade back in at the loop end -->
-      <div class="sc" id="sc5"><img src="images/m5-pdf.jpg" alt="PDF is generated"></div>
-      <div class="sc" id="sc4"><img src="images/m4-summary.jpg" alt="Inspection summary and report"></div>
-      <div class="sc" id="sc3"><img src="images/m3-findings.jpg" alt="Findings: plumbing"></div>
-      <div class="sc" id="sc2"><img src="images/m2-property.jpg" alt="Property details"></div>
-      <div class="sc" id="sc1"><img src="images/m1-home.jpg" alt="Inspector home"></div>
+      <div class="sc" id="sc5"><img src="images/m5-pdf.png" alt="PDF is generated"></div>
+      <div class="sc" id="sc4"><img src="images/m4-summary.png" alt="Inspection summary and report"></div>
+      <div class="sc" id="sc3"><img src="images/m3-findings.png" alt="Findings: plumbing"></div>
+      <div class="sc" id="sc2"><img src="images/m2-property.png" alt="Property details"></div>
+      <div class="sc" id="sc1"><img src="images/m1-home.png" alt="Inspector home"></div>
       <div class="sent" id="sent"><span>&#10003;</span><b>Report sent</b><small>PDF emailed to client<br>Dashboard updated</small></div>
     </div>
   </div>
@@ -136,11 +136,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
   var T=20; // total loop length
   // fade = [fadeInStart, fadeInEnd, fadeOutStart, fadeOutEnd]   scroll = [scrollStart, scrollEnd]
   var SCREENS=[
-    {id:'sc1',fade:[-1,0,3.4,3.9],       scroll:[0.6,3.2]},    // home
-    {id:'sc2',fade:[3.4,3.9,7.2,7.7],    scroll:[4.0,7.0]},    // property
-    {id:'sc3',fade:[7.2,7.7,11.0,11.5],  scroll:[7.8,10.8]},   // findings
-    {id:'sc4',fade:[11.0,11.5,14.8,15.3],scroll:[11.6,14.6]},  // summary
-    {id:'sc5',fade:[14.8,15.3,19.4,19.9],scroll:[15.4,16.9]}   // pdf generated
+    {id:'sc1',fade:[-1,0,3.4,3.9],     scroll:[0.6,3.2]},   // home
+    {id:'sc2',fade:[3.4,3.9,7.2,7.7],  scroll:[4.0,7.0]},   // property
+    {id:'sc3',fade:[7.2,7.7,11.0,11.5],scroll:[7.8,10.8]},  // findings
+    {id:'sc4',fade:[11.0,11.5,14.8,15.3],scroll:[11.6,14.6]},// summary
+    {id:'sc5',fade:[14.8,15.3,19.4,19.9],scroll:[15.4,16.9]}// pdf generated
   ];
   var SENT=[17.4,17.8,19.2,19.7];                 // "Report sent" overlay
   var TOAST1=[1.7,2.0,4.4,4.8];                   // New booking received
@@ -149,7 +149,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
   var DESK_DOWN=[0.5,3.4], DESK_UP=[18.4,19.7];   // dashboard scroll
   var GRAPH_BUILD=[3.2,5.2], GRAPH_DRAIN=[18.6,19.8];
 
-  SCREENS.forEach(function(s){s.el=$(s.id);s.img=s.el.querySelector('img')});
+  screens=SCREENS.forEach(function(s){s.el=$(s.id);s.img=s.el.querySelector('img')});
 
   function fit(){var s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform='translate(-50%,-50%) scale('+s+')'}
   addEventListener('resize',fit);fit();
