@@ -65,7 +65,7 @@ ico{display:inline-block;width:1em;height:1em;vertical-align:-.14em}
 .bars{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;margin-top:12px}
 .bc p{display:flex;justify-content:space-between;font-weight:700;font-size:14px}.bc p span{color:#0b57a4}
 .bc u{display:block;height:6px;border-radius:3px;background:#e6ebf3;margin-top:6px;position:relative}
-.bc u::after{content:"";position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--k,#0b57a4);width:var(--w)}
+.bc u::after{content:"";position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--k,#0b57a4);width:var(--w);transform-origin:0 50%;transform:scaleX(var(--g,0))}
 .ban{display:flex;gap:16px;align-items:center;background:#eaf2fc;border-radius:16px;padding:12px;margin-top:14px}
 .ban .im{width:84px;height:62px;border-radius:10px;background:linear-gradient(135deg,#3a3f45,#8b7d6b);position:relative;flex:none;overflow:hidden}
 .ban .im::after{content:"";position:absolute;left:14px;top:12px;right:-6px;bottom:-6px;background:repeating-linear-gradient(0deg,#e8eef5 0 2px,#cfd9e6 2px 8px);transform:rotate(-8deg);border-radius:3px}
@@ -177,8 +177,8 @@ ico{display:inline-block;width:1em;height:1em;vertical-align:-.14em}
         </div>
         <div class="g2"><div>
           <div class="card" style="padding:18px 24px"><div style="font-size:19px;font-weight:800">Inspections by Category</div><div class="sub" style="margin-top:2px">Volume distribution per structural type</div>
-            <div class="bars"><div class="bc"><p>Residential Standard<span>582</span></p><u style="--w:65%"></u></div><div class="bc"><p>Pest &amp; Termite<span>410</span></p><u style="--w:46%"></u></div>
-            <div class="bc"><p>Commercial Facilities<span>284</span></p><u style="--w:32%"></u></div><div class="bc"><p>Pre-Purchase Audit<span>153</span></p><u style="--w:18%;--k:#4a5568"></u></div></div>
+            <div class="bars"><div class="bc"><p>Residential Standard<span data-n="582">582</span></p><u style="--w:65%"></u></div><div class="bc"><p>Pest &amp; Termite<span data-n="410">410</span></p><u style="--w:46%"></u></div>
+            <div class="bc"><p>Commercial Facilities<span data-n="284">284</span></p><u style="--w:32%"></u></div><div class="bc"><p>Pre-Purchase Audit<span data-n="153">153</span></p><u style="--w:18%;--k:#4a5568"></u></div></div>
             <div class="ban"><div class="im"></div><div><b>New Inspection Template</b><p>The "Industrial Complex v4.2" template was successfully deployed. All inspectors have been notified.</p></div></div></div>
           <div class="card" style="background:#eaf2fc;padding:14px 24px;margin-top:16px"><div style="font-size:19px;font-weight:800;margin-bottom:6px">Recent Reports Compliance</div>
             <div class="tr h" style="grid-template-columns:100px 1fr 1fr 1fr 70px"><span>REPORT ID</span><span>INSPECTOR</span><span>CATEGORY</span><span>TIMELINE</span><span>STATUS</span></div>
@@ -346,6 +346,11 @@ ico{display:inline-block;width:1em;height:1em;vertical-align:-.14em}
   function toast(id,w,t){var a=win(t,w),e=$(id);e.style.opacity=a.toFixed(3);e.style.transform='translateY('+((1-a)*12).toFixed(1)+'px)'}
   function measure(){SCREENS.forEach(function(s){s.max=Math.max(0,s.img.offsetHeight-screen.clientHeight)})}
 
+  /* dashboard category bars: grow from 0 to their final length, numbers count up with them */
+  var barEls=[].slice.call(document.querySelectorAll('.bc u')),
+      numEls=[].slice.call(document.querySelectorAll('.bc p span'));
+  function ease3(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2}
+
   /* sidebar: highlight slides; button label + search text fade-swap */
   function swap(el,txt){el.style.opacity=0;setTimeout(function(){el.textContent=txt;el.style.opacity=1},250)}
   var cur=-1;
@@ -357,6 +362,11 @@ ico{display:inline-block;width:1em;height:1em;vertical-align:-.14em}
   }
 
   function frame(t){
+    /* bars: 0.3s -> 3.0s grow, then hold until the slide changes; reset while dashboard is hidden */
+    var g=t<5.2?ease3(p(t,0.3,3.0)):0;
+    barEls.forEach(function(u){u.style.setProperty('--g',g.toFixed(3))});
+    numEls.forEach(function(n){n.textContent=Math.round(+n.getAttribute('data-n')*g)});
+
     var activeUrl=DESK[0].url,maxO=0;
     DESK.forEach(function(s,i){
       var o=win(t,s.fade);
