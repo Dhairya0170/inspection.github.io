@@ -54,7 +54,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 .phone::before{content:"";position:absolute;top:5px;left:50%;width:70px;height:8px;margin-left:-35px;border-radius:5px;background:#1b2731}
 .screen{flex:1;border-radius:30px;overflow:hidden;background:#dde7f5;position:relative}
 .sc{position:absolute;inset:0;overflow:hidden;opacity:0;background:#dde7f5}
-.sc img{display:block;width:100%;height:auto;will-change:transform}
+
+/* ZOOM IN MODIFICATION: 108% width zooms in slightly to eliminate excess side padding */
+.sc img{display:block;width:108%;margin-left:-4%;height:auto;will-change:transform}
+
 .sent{position:absolute;inset:0;background:rgba(9,25,38,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;opacity:0}
 .sent span{width:74px;height:74px;border-radius:50%;background:var(--green);display:grid;place-items:center;font-size:40px;margin-bottom:16px}
 .sent b{font-size:22px}
