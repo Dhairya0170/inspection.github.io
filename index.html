@@ -23,15 +23,18 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 
 /* browser window */
 .win{position:absolute;left:48px;top:92px;width:902px;height:703px;border-radius:13px;background:#fff;overflow:hidden;box-shadow:0 40px 80px -20px rgba(0,0,0,.65),0 0 0 1px rgba(255,255,255,.08)}
-.bar{height:34px;background:#eceff3;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid #d9dee5}
+.bar{height:34px;background:#eceff3;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid #d9dee5;z-index:10;position:relative}
 .bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
 .bar i:nth-child(2){background:#febc2e}.bar i:nth-child(3){background:#28c840}
-.url{flex:1;margin-left:14px;height:20px;border-radius:10px;background:#fff;color:#6b7686;font-size:11px;line-height:20px;padding:0 12px}
-.view{height:669px;overflow:hidden;position:relative}
-.desk{width:100%;position:relative;container-type:inline-size;will-change:transform}
-.desk>img{display:block;width:100%;height:auto}
+.url{flex:1;margin-left:14px;height:20px;border-radius:10px;background:#fff;color:#6b7686;font-size:11px;line-height:20px;padding:0 12px;transition:all 0.3s ease}
+.view{height:669px;overflow:hidden;position:relative;background:#fff}
 
-/* live graph overlay in dashboard */
+/* desktop screens stack */
+.desk-sc{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;opacity:0;background:#fff;will-change:opacity}
+.desk-wrap{width:100%;position:relative;container-type:inline-size;will-change:transform}
+.desk-wrap>img{display:block;width:100%;height:auto}
+
+/* live graph in the d1 dashboard empty bottom strip */
 .graph{position:absolute;left:25%;top:88%;width:47.4%;height:10.6%;background:#fff;border-radius:2.4cqw;box-shadow:0 .8cqw 3cqw rgba(15,40,90,.16);
   display:grid;grid-template-columns:27% 31% 1fr;align-items:center;gap:1.6cqw;padding:0 2.4cqw;color:#14213d}
 .g-stats{display:grid;gap:.9cqw}
@@ -78,35 +81,47 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
   <img class="brand" src="images/logo.png" alt="Media Clock">
 
   <div class="win">
-    <div class="bar"><i></i><i></i><i></i><div class="url">app.totalinspections.com.au/dashboard</div></div>
-    <div class="view">
-      <div class="desk" id="desk">
-        <img id="deskimg" src="images/dashboard.png" alt="Total Inspections admin dashboard">
-        <div class="graph">
-          <div class="g-stats">
-            <div><small>Jobs completed</small><b id="jobs">0</b></div>
-            <div><small>Revenue (MTD)</small><b id="rev">$0.0k</b></div>
+    <div class="bar"><i></i><i></i><i></i><div class="url" id="url-bar">app.totalinspections.com.au/dashboard</div></div>
+    <div class="view" id="desk-view">
+      <!-- 4 Desktop screens cycling smoothly -->
+      <div class="desk-sc" id="dsc4">
+        <div class="desk-wrap"><img src="images/d4.png" alt="Inspection Archive"></div>
+      </div>
+      <div class="desk-sc" id="dsc3">
+        <div class="desk-wrap"><img src="images/d3.png" alt="Branding Identity"></div>
+      </div>
+      <div class="desk-sc" id="dsc2">
+        <div class="desk-wrap"><img src="images/d2.png" alt="Template Management"></div>
+      </div>
+      <div class="desk-sc" id="dsc1" style="opacity: 1;">
+        <div class="desk-wrap">
+          <img src="images/d1.png" alt="Dashboard overview">
+          <div class="graph">
+            <div class="g-stats">
+              <div><small>Jobs completed</small><b id="jobs">0</b></div>
+              <div><small>Revenue (MTD)</small><b id="rev">$0.0k</b></div>
+            </div>
+            <svg viewBox="0 0 138 60" aria-hidden="true">
+              <rect class="b" x="0"   width="14" y="33" height="27" rx="2"/>
+              <rect class="b" x="20"  width="14" y="22" height="38" rx="2"/>
+              <rect class="b" x="40"  width="14" y="35" height="25" rx="2"/>
+              <rect class="b" x="60"  width="14" y="17" height="43" rx="2"/>
+              <rect class="b" x="80"  width="14" y="25" height="35" rx="2"/>
+              <rect class="b hot" x="100" width="14" y="6" height="54" rx="2"/>
+              <rect class="b" x="120" width="14" y="30" height="30" rx="2"/>
+            </svg>
+            <svg viewBox="0 0 200 60" aria-hidden="true">
+              <defs>
+                <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stop-color="#f15b29" stop-opacity=".35"/>
+                  <stop offset="1" stop-color="#f15b29" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <path id="area" fill="url(#fill)"/>
+              <path id="ln" class="line"/>
+              <circle id="live-dot" r="3.5" fill="#f15b29"/>
+            </svg>
           </div>
-          <svg viewBox="0 0 138 60" aria-hidden="true">
-            <rect class="b" x="0"   width="14" y="33" height="27" rx="2"/>
-            <rect class="b" x="20"  width="14" y="22" height="38" rx="2"/>
-            <rect class="b" x="40"  width="14" y="35" height="25" rx="2"/>
-            <rect class="b" x="60"  width="14" y="17" height="43" rx="2"/>
-            <rect class="b" x="80"  width="14" y="25" height="35" rx="2"/>
-            <rect class="b hot" x="100" width="14" y="6" height="54" rx="2"/>
-            <rect class="b" x="120" width="14" y="30" height="30" rx="2"/>
-          </svg>
-          <svg viewBox="0 0 200 60" aria-hidden="true">
-            <defs>
-              <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#f15b29" stop-opacity=".35"/>
-                <stop offset="1" stop-color="#f15b29" stop-opacity="0"/>
-              </linearGradient>
-            </defs>
-            <path id="area" fill="url(#fill)"/>
-            <path id="ln" class="line"/>
-            <circle id="live-dot" r="3.5" fill="#f15b29"/>
-          </svg>
         </div>
       </div>
     </div>
@@ -120,7 +135,6 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 
   <div class="phone">
     <div class="screen" id="screen">
-      <!-- home screen rendered visible initially so desktop and mobile start immediately together -->
       <div class="sc" id="sc5"><img src="images/m5-pdf.png" alt="PDF is generated"></div>
       <div class="sc" id="sc4"><img src="images/m4-summary.png" alt="Inspection summary and report"></div>
       <div class="sc" id="sc3"><img src="images/m3-findings.png" alt="Findings: plumbing"></div>
@@ -138,11 +152,21 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 <script>
 (function(){
   var $=function(i){return document.getElementById(i)},
-      stage=$('stage'),desk=$('desk'),deskimg=$('deskimg'),screen=$('screen'),sent=$('sent'),links=$('links'),
+      stage=$('stage'),deskView=$('desk-view'),urlBar=$('url-bar'),screen=$('screen'),sent=$('sent'),links=$('links'),
       ln=$('ln'),area=$('area'),dot=$('live-dot'),jobs=$('jobs'),rev=$('rev'),bars=[].slice.call(document.querySelectorAll('.b'));
 
   /* ---------- TIMELINE (seconds) ---------- */
   var T=20; // total loop length
+
+  // 4 Desktop screens cycling throughout the story
+  var DESK_SCREENS=[
+    {id:'dsc1', url:'app.totalinspections.com.au/dashboard', fade:[-1, 0, 4.6, 5.2], scroll:[0.5, 4.2]},
+    {id:'dsc2', url:'app.totalinspections.com.au/templates', fade:[4.6, 5.2, 9.6, 10.2], scroll:[5.2, 9.2]},
+    {id:'dsc3', url:'app.totalinspections.com.au/branding',  fade:[9.6, 10.2, 14.6, 15.2], scroll:[10.2, 14.2]},
+    {id:'dsc4', url:'app.totalinspections.com.au/reports',   fade:[14.6, 15.2, 19.4, 19.9], scroll:[15.2, 18.8]}
+  ];
+
+  // 5 Mobile screens cycling smoothly
   var SCREENS=[
     {id:'sc1',fade:[-1,0,3.4,3.9],     scroll:[0.6,3.2]},   // home
     {id:'sc2',fade:[3.4,3.9,7.2,7.7],  scroll:[4.0,7.0]},   // property
@@ -150,13 +174,14 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
     {id:'sc4',fade:[11.0,11.5,14.8,15.3],scroll:[11.6,14.6]},// summary
     {id:'sc5',fade:[14.8,15.3,19.4,19.9],scroll:[15.4,16.9]}// pdf generated
   ];
+
   var SENT=[17.4,17.8,19.2,19.7];                 // "Report sent" overlay
   var TOAST1=[1.7,2.0,4.4,4.8];                   // New booking received
   var TOAST2=[12.5,12.9,18.8,19.4];               // Quote #318 auto-generated
   var TOAST3=[17.9,18.3,19.0,19.6];               // Invoice synced to Xero
-  var DESK_DOWN=[0.5,3.4], DESK_UP=[18.4,19.7];   // dashboard scroll
   var GRAPH_BUILD=[0.2,3.2], GRAPH_DRAIN=[18.6,19.8];
 
+  DESK_SCREENS.forEach(function(s){s.el=$(s.id);s.wrap=s.el.querySelector('.desk-wrap');s.img=s.el.querySelector('img')});
   SCREENS.forEach(function(s){s.el=$(s.id);s.img=s.el.querySelector('img')});
 
   function fit(){var s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform='translate(-50%,-50%) scale('+s+')'}
@@ -177,37 +202,53 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
   /* ---------- helpers ---------- */
   var c=function(x){return x<0?0:x>1?1:x},
       p=function(t,a,b){return c((t-a)/(b-a))},
-      ease=function(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},   // dashboard
-      soft=function(x){return x*x*(3-2*x)},                            // phone scrolling
+      ease=function(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},
+      soft=function(x){return x*x*(3-2*x)},
       out=function(x){return 1-Math.pow(1-x,3)},
       win=function(t,w){return c((t-w[0])/(w[1]-w[0]))*(1-c((t-w[2])/(w[3]-w[2])))};
   function toast(id,w,t){var a=win(t,w),e=$(id);e.style.opacity=a.toFixed(3);e.style.transform='translateY('+((1-a)*12).toFixed(1)+'px)'}
 
-  var maxD=0;
   function measure(){
-    maxD=Math.max(0,deskimg.offsetHeight-desk.parentNode.clientHeight);
+    var vH = deskView.clientHeight;
+    DESK_SCREENS.forEach(function(s){s.max=Math.max(0,s.wrap.offsetHeight-vH)});
     SCREENS.forEach(function(s){s.max=Math.max(0,s.img.offsetHeight-screen.clientHeight)});
   }
 
-  // Base path coordinates for desktop live graph
+  // Live graph coordinates for d1 dashboard
   var lineBase = [[0,44],[22,38],[44,42],[66,28],[88,32],[110,18],[132,22],[154,10],[176,14],[200,6]];
 
   function frame(t){
-    /* dashboard scroll + graph */
-    var sd=ease(p(t,DESK_DOWN[0],DESK_DOWN[1]))-ease(p(t,DESK_UP[0],DESK_UP[1]));
-    desk.style.transform='translateY('+(-sd*maxD).toFixed(1)+'px)';
-    
-    var v=out(p(t,GRAPH_BUILD[0],GRAPH_BUILD[1]))*(1-ease(p(t,GRAPH_DRAIN[0],GRAPH_DRAIN[1])));
-    
-    // Animate bars
-    bars.forEach(function(b,i){
-      var barScale = c(v*1.6 - i*.09);
-      // add subtle live breathing animation to bars
-      if(v > 0.8) barScale += Math.sin(t*3 + i)*0.03;
-      b.style.transform='scaleY('+c(barScale).toFixed(3)+')';
+    /* 1. Desktop screens transition & scroll */
+    var activeUrl = DESK_SCREENS[0].url;
+    var maxOpacity = 0;
+
+    DESK_SCREENS.forEach(function(s, i){
+      var o = win(t, s.fade);
+      if(i === 0) o = c(o + c((t - 19.4) / .6)); // dsc1 fades back in at loop end
+      s.el.style.opacity = o.toFixed(3);
+
+      if(o > maxOpacity){
+        maxOpacity = o;
+        activeUrl = s.url;
+      }
+
+      var sd = ease(p(t, s.scroll[0], s.scroll[1]));
+      s.wrap.style.transform = 'translateY(' + (-sd * s.max).toFixed(1) + 'px)';
     });
 
-    // Animate line graph continuously with smooth live wave effect
+    if(urlBar.textContent !== activeUrl){
+      urlBar.textContent = activeUrl;
+    }
+
+    /* 2. Live graph animation on Dashboard (d1) */
+    var v = out(p(t, GRAPH_BUILD[0], GRAPH_BUILD[1])) * (1 - ease(p(t, GRAPH_DRAIN[0], GRAPH_DRAIN[1])));
+    
+    bars.forEach(function(b, i){
+      var barScale = c(v * 1.6 - i * .09);
+      if(v > 0.8) barScale += Math.sin(t * 3 + i) * 0.03;
+      b.style.transform = 'scaleY(' + c(barScale).toFixed(3) + ')';
+    });
+
     var currentPts = lineBase.map(function(pt, i){
       var wave = Math.sin(t * 2.2 + i * 0.8) * 2.5 * v;
       return [pt[0], Math.max(3, Math.min(57, pt[1] + wave))];
@@ -225,54 +266,56 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
     dot.setAttribute('cy', endPt[1]);
     dot.setAttribute('opacity', (v * (0.8 + Math.sin(t * 6) * 0.2)).toFixed(2));
 
-    // Stats count animation
     jobs.textContent = Math.round(128 * v);
     rev.textContent = '$' + (48.2 * v).toFixed(1) + 'k';
 
-    /* phone screens */
-    SCREENS.forEach(function(s,i){
-      var o=win(t,s.fade);
-      if(i===0) o=c(o+c((t-19.4)/.6));                       // home fades back in for seamless loop
-      s.el.style.opacity=o.toFixed(3);
-      var f=(i===0&&t>4)?0:soft(p(t,s.scroll[0],s.scroll[1]));
-      s.img.style.transform='translateY('+(-f*s.max).toFixed(1)+'px)';
+    /* 3. Phone screens transition & scroll */
+    SCREENS.forEach(function(s, i){
+      var o = win(t, s.fade);
+      if(i === 0) o = c(o + c((t - 19.4) / .6)); // home fades back in for seamless loop
+      s.el.style.opacity = o.toFixed(3);
+      var f = (i === 0 && t > 4) ? 0 : soft(p(t, s.scroll[0], s.scroll[1]));
+      s.img.style.transform = 'translateY(' + (-f * s.max).toFixed(1) + 'px)';
     });
-    sent.style.opacity=win(t,SENT).toFixed(3);
+    sent.style.opacity = win(t, SENT).toFixed(3);
 
-    /* toasts + connector dots */
-    toast('t1',TOAST1,t);toast('t2',TOAST2,t);toast('t3',TOAST3,t);
-    dots.forEach(function(d,i){
-      var u=((t*.55+i*.27)%1);
-      d.el.setAttribute('cx',(ox+(1348-ox)*u).toFixed(1));
-      d.el.setAttribute('cy',(oy+(d.y-oy)*u).toFixed(1));
-      d.el.setAttribute('opacity',Math.sin(u*Math.PI).toFixed(2));
+    /* 4. Toasts + connector dots */
+    toast('t1', TOAST1, t);
+    toast('t2', TOAST2, t);
+    toast('t3', TOAST3, t);
+
+    dots.forEach(function(d, i){
+      var u = ((t * .55 + i * .27) % 1);
+      d.el.setAttribute('cx', (ox + (1348 - ox) * u).toFixed(1));
+      d.el.setAttribute('cy', (oy + (d.y - oy) * u).toFixed(1));
+      d.el.setAttribute('opacity', Math.sin(u * Math.PI).toFixed(2));
     });
   }
 
-  var still=matchMedia('(prefers-reduced-motion: reduce)').matches, t0=0;
-  function restart(){t0=performance.now()}
+  var still = matchMedia('(prefers-reduced-motion: reduce)').matches, t0 = 0;
+  function restart(){t0 = performance.now()}
   function tick(now){
-    frame(still?5:((now-t0)/1000)%T);
+    frame(still ? 5 : ((now - t0) / 1000) % T);
     requestAnimationFrame(tick);
   }
 
-  // START IMMEDIATELY so both mobile and desktop screens animate together from t = 0
+  // START IMMEDIATELY at t = 0 simultaneously for both screens
   measure();
   restart();
   requestAnimationFrame(tick);
 
-  // Recalculate heights once image assets finish loading in background
-  var imgs=[deskimg].concat(SCREENS.map(function(s){return s.img}));
-  imgs.forEach(function(im){
+  // Recalculate measurements as assets finish loading
+  var allImgs = DESK_SCREENS.map(function(s){return s.img}).concat(SCREENS.map(function(s){return s.img}));
+  allImgs.forEach(function(im){
     if(!im.complete) im.onload = measure;
   });
-  addEventListener('resize',measure);
+  addEventListener('resize', measure);
 
-  document.addEventListener('keydown',function(e){
-    if(e.key==='r'||e.key==='R')restart();
-    if(e.key==='f'||e.key==='F'){
-      if(document.fullscreenElement)document.exitFullscreen();
-      else if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'r' || e.key === 'R') restart();
+    if(e.key === 'f' || e.key === 'F'){
+      if(document.fullscreenElement) document.exitFullscreen();
+      else if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
     }
   });
 })();
