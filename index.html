@@ -6,11 +6,11 @@
 <title>Total Inspections | Media Clock</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark;--bg:#162b33;--orange:#f15b29;--green:#3fb37f;--body:"Manrope","Segoe UI",system-ui,sans-serif}
-*{box-sizing:border-box}
-html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
+:root{color-scheme:dark;--bg:#162b33;--orange:#f15b29;--green:#3fb37f;--app-bg:#f4f7f9;--border:#e2e8f0;--text:#14213d;--text-light:#6b7686;--body:"Manrope","Segoe UI",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);cursor:none}
 
 /* fixed 1600x900 (16:9) canvas, scaled to fit any screen */
 #stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:50% 50%;overflow:hidden;font-family:var(--body);
@@ -26,24 +26,65 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 .bar{height:34px;background:#eceff3;display:flex;align-items:center;gap:7px;padding:0 14px;border-bottom:1px solid #d9dee5;z-index:10;position:relative}
 .bar i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
 .bar i:nth-child(2){background:#febc2e}.bar i:nth-child(3){background:#28c840}
-.url{flex:1;margin-left:14px;height:20px;border-radius:10px;background:#fff;color:#6b7686;font-size:11px;line-height:20px;padding:0 12px;transition:all 0.3s ease}
-.view{height:669px;overflow:hidden;position:relative;background:#fff}
+.url{flex:1;margin-left:14px;height:20px;border-radius:10px;background:#fff;color:var(--text-light);font-size:11px;line-height:20px;padding:0 12px;transition:all 0.3s ease}
+.view{height:669px;overflow:hidden;position:relative;background:var(--app-bg)}
 
-/* desktop screens stack */
-.desk-sc{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;opacity:0;background:#fff;will-change:opacity}
-.desk-wrap{width:100%;position:relative;container-type:inline-size;will-change:transform}
-.desk-wrap>img{display:block;width:100%;height:auto}
+/* --- CODED DESKTOP UI APP STYLES --- */
+.desk-sc{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;opacity:0;will-change:opacity}
+.desk-wrap{width:100%;height:860px;position:relative;will-change:transform} /* Taller than view to allow scroll */
 
-/* live graph in the d1 dashboard empty bottom strip */
-.graph{position:absolute;left:25%;top:88%;width:47.4%;height:10.6%;background:#fff;border-radius:2.4cqw;box-shadow:0 .8cqw 3cqw rgba(15,40,90,.16);
-  display:grid;grid-template-columns:27% 31% 1fr;align-items:center;gap:1.6cqw;padding:0 2.4cqw;color:#14213d}
-.g-stats{display:grid;gap:.9cqw}
-.g-stats small{display:block;font-size:1.05cqw;color:#6b7686;font-weight:500;line-height:1.1}
-.g-stats b{display:block;font-size:3cqw;line-height:1.05;font-weight:700;letter-spacing:-.02em}
-.graph svg{width:100%;height:76%;display:block;overflow:visible}
+.app{display:flex;height:100%;width:100%;background:var(--app-bg);color:var(--text)}
+.sidebar{width:220px;background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column}
+.sb-logo{height:60px;display:flex;align-items:center;padding:0 24px;font-weight:700;font-size:16px;border-bottom:1px solid var(--border);color:var(--bg)}
+.sb-nav{padding:20px 12px;display:flex;flex-direction:column;gap:4px}
+.nav-item{padding:10px 12px;border-radius:6px;color:var(--text-light);font-size:13px;font-weight:600;display:flex;align-items:center;gap:12px}
+.nav-item.active{background:rgba(241,91,41,.1);color:var(--orange)}
+.nav-icon{width:16px;height:16px;border-radius:3px;background:currentColor;opacity:0.8}
+
+.main{flex:1;display:flex;flex-direction:column}
+.header{height:60px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 32px;justify-content:space-between}
+.header h1{font-size:18px;font-weight:700;margin:0}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--bg)}
+
+.content{padding:32px;display:flex;flex-direction:column;gap:24px}
+.card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:24px;box-shadow:0 4px 12px rgba(0,0,0,.02)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+
+/* D1: Dashboard Native Graph Layout */
+.dash-stats{display:flex;gap:24px}
+.stat-box{flex:1;background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.stat-box small{font-size:12px;color:var(--text-light);font-weight:600}
+.stat-box b{font-size:28px;line-height:1;font-weight:700}
+.stat-box.highlight b{color:var(--orange)}
+
+.graph-container{display:flex;align-items:flex-end;gap:20px;height:180px;margin-top:10px}
+.bar-chart{flex:1;height:100%}
+.line-chart{flex:1.5;height:100%}
+svg{width:100%;height:100%;overflow:visible}
 .b{fill:#0b57a4;transform-box:fill-box;transform-origin:50% 100%;transition:transform 0.1s ease-out}
 .b.hot{fill:var(--orange)}
 .line{fill:none;stroke:var(--orange);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* D2: Templates List */
+.tpl-row{display:flex;align-items:center;justify-content:space-between;padding:16px;border-bottom:1px solid var(--border)}
+.tpl-row:last-child{border-bottom:none}
+.tpl-info h4{font-size:14px;margin-bottom:4px}
+.tpl-info p{font-size:12px;color:var(--text-light)}
+.badge{padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;background:#eef2f6;color:var(--text-light)}
+.badge.active{background:rgba(63,179,127,.15);color:var(--green)}
+
+/* D3: Branding Form */
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:12px;font-weight:600;margin-bottom:8px;color:var(--text-light)}
+.input{width:100%;height:40px;border:1px solid var(--border);border-radius:6px;background:#f8fafc;padding:0 12px;font-family:inherit;font-size:14px}
+.color-picker{display:flex;gap:12px}
+.color-swatch{width:40px;height:40px;border-radius:6px;border:2px solid #fff;box-shadow:0 0 0 1px var(--border)}
+
+/* D4: Reports Table */
+.table{width:100%;border-collapse:collapse}
+.table th{text-align:left;padding:12px 16px;font-size:12px;color:var(--text-light);border-bottom:1px solid var(--border)}
+.table td{padding:16px;font-size:13px;font-weight:500;border-bottom:1px solid var(--border)}
 
 /* integrations */
 .links{position:absolute;inset:0;width:1600px;height:900px;pointer-events:none}
@@ -57,8 +98,6 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 .phone::before{content:"";position:absolute;top:5px;left:50%;width:70px;height:8px;margin-left:-35px;border-radius:5px;background:#1b2731}
 .screen{flex:1;border-radius:30px;overflow:hidden;background:#dde7f5;position:relative}
 .sc{position:absolute;inset:0;overflow:hidden;opacity:0;background:#dde7f5}
-
-/* ZOOM IN MODIFICATION: 108% width for a slight zoom */
 .sc img{display:block;width:108%;margin-left:-4%;height:auto;will-change:transform}
 
 .sent{position:absolute;inset:0;background:rgba(9,25,38,.9);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;opacity:0}
@@ -67,10 +106,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 .sent small{margin-top:6px;color:#b9c9d1;font-size:13px;line-height:1.4}
 
 /* toasts */
-.toast{position:absolute;height:58px;border-radius:12px;background:#fff;color:#14213d;display:flex;align-items:center;gap:12px;padding:0 16px 0 12px;box-shadow:0 18px 36px -14px rgba(0,0,0,.6);opacity:0}
+.toast{position:absolute;height:58px;border-radius:12px;background:#fff;color:var(--text);display:flex;align-items:center;gap:12px;padding:0 16px 0 12px;box-shadow:0 18px 36px -14px rgba(0,0,0,.6);opacity:0}
 .toast i{font-style:normal;width:32px;height:32px;border-radius:9px;background:var(--orange);color:#fff;display:grid;place-items:center;font-size:17px;font-weight:700}
 .toast b{display:block;font-size:14px;line-height:1.2}
-.toast small{display:block;font-size:11.5px;color:#6b7686}
+.toast small{display:block;font-size:11.5px;color:var(--text-light)}
 #t1{left:640px;top:24px;width:300px}
 #t2{left:48px;top:822px;width:330px}#t2 i{background:#2a4652}
 #t3{left:1180px;top:822px;width:310px}#t3 i{background:var(--green)}
@@ -82,48 +121,186 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 
   <div class="win">
     <div class="bar"><i></i><i></i><i></i><div class="url" id="url-bar">app.totalinspections.com.au/dashboard</div></div>
+    
     <div class="view" id="desk-view">
-      <!-- 4 Desktop screens cycling smoothly -->
+      
+      <!-- SCREEN 4: REPORTS ARCHIVE -->
       <div class="desk-sc" id="dsc4">
-        <div class="desk-wrap"><img src="images/d4.png" alt="Inspection Archive"></div>
-      </div>
-      <div class="desk-sc" id="dsc3">
-        <div class="desk-wrap"><img src="images/d3.png" alt="Branding Identity"></div>
-      </div>
-      <div class="desk-sc" id="dsc2">
-        <div class="desk-wrap"><img src="images/d2.png" alt="Template Management"></div>
-      </div>
-      <div class="desk-sc" id="dsc1" style="opacity: 1;">
         <div class="desk-wrap">
-          <img src="images/d1.png" alt="Dashboard overview">
-          <div class="graph">
-            <div class="g-stats">
-              <div><small>Jobs completed</small><b id="jobs">0</b></div>
-              <div><small>Revenue (MTD)</small><b id="rev">$0.0k</b></div>
+          <div class="app">
+            <div class="sidebar">
+              <div class="sb-logo">Total Inspections</div>
+              <div class="sb-nav">
+                <div class="nav-item"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
+                <div class="nav-item"><div class="nav-icon"></div> Templates</div>
+                <div class="nav-item"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
+                <div class="nav-item active"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
+              </div>
             </div>
-            <svg viewBox="0 0 138 60" aria-hidden="true">
-              <rect class="b" x="0"   width="14" y="33" height="27" rx="2"/>
-              <rect class="b" x="20"  width="14" y="22" height="38" rx="2"/>
-              <rect class="b" x="40"  width="14" y="35" height="25" rx="2"/>
-              <rect class="b" x="60"  width="14" y="17" height="43" rx="2"/>
-              <rect class="b" x="80"  width="14" y="25" height="35" rx="2"/>
-              <rect class="b hot" x="100" width="14" y="6" height="54" rx="2"/>
-              <rect class="b" x="120" width="14" y="30" height="30" rx="2"/>
-            </svg>
-            <svg viewBox="0 0 200 60" aria-hidden="true">
-              <defs>
-                <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#f15b29" stop-opacity=".35"/>
-                  <stop offset="1" stop-color="#f15b29" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <path id="area" fill="url(#fill)"/>
-              <path id="ln" class="line"/>
-              <circle id="live-dot" r="3.5" fill="#f15b29"/>
-            </svg>
+            <div class="main">
+              <div class="header"><h1>Inspection Archive</h1><div class="user-avatar"></div></div>
+              <div class="content">
+                <div class="card" style="padding:0">
+                  <table class="table">
+                    <thead><tr><th>Date</th><th>Property Address</th><th>Inspector</th><th>Status</th></tr></thead>
+                    <tbody>
+                      <tr><td>Today, 09:30 AM</td><td>42 Riverside Drive, Brisbane</td><td>John S.</td><td><span class="badge active">Completed</span></td></tr>
+                      <tr><td>Yesterday</td><td>180 Smith Street, Melbourne</td><td>Mike T.</td><td><span class="badge active">Completed</span></td></tr>
+                      <tr><td>12 Oct 2023</td><td>8/15 Ocean View, Sydney</td><td>Sarah J.</td><td><span class="badge">Pending</span></td></tr>
+                      <tr><td>11 Oct 2023</td><td>9021 High Road, Perth</td><td>John S.</td><td><span class="badge active">Completed</span></td></tr>
+                      <tr><td>10 Oct 2023</td><td>23 Valley Court, Adelaide</td><td>Mike T.</td><td><span class="badge active">Completed</span></td></tr>
+                      <tr><td>08 Oct 2023</td><td>77 Park Avenue, Brisbane</td><td>Sarah J.</td><td><span class="badge active">Completed</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- SCREEN 3: BRANDING -->
+      <div class="desk-sc" id="dsc3">
+        <div class="desk-wrap">
+          <div class="app">
+            <div class="sidebar">
+              <div class="sb-logo">Total Inspections</div>
+              <div class="sb-nav">
+                <div class="nav-item"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
+                <div class="nav-item"><div class="nav-icon"></div> Templates</div>
+                <div class="nav-item active"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
+                <div class="nav-item"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
+              </div>
+            </div>
+            <div class="main">
+              <div class="header"><h1>Branding Identity</h1><div class="user-avatar"></div></div>
+              <div class="content">
+                <div class="grid-2">
+                  <div class="card">
+                    <h3 style="margin-bottom:20px;font-size:15px">Global Settings</h3>
+                    <div class="form-group">
+                      <label>Company Name</label>
+                      <div class="input" style="line-height:40px;color:#14213d">Total Inspections AU</div>
+                    </div>
+                    <div class="form-group">
+                      <label>Report Accent Colors</label>
+                      <div class="color-picker">
+                        <div class="color-swatch" style="background:var(--orange)"></div>
+                        <div class="color-swatch" style="background:#162b33"></div>
+                        <div class="color-swatch" style="background:var(--green)"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card" style="display:flex;align-items:center;justify-content:center;background:#f8fafc;border:2px dashed var(--border)">
+                    <div style="text-align:center;color:var(--text-light)">
+                      <div style="font-size:24px;margin-bottom:8px">☁️</div>
+                      <b>Upload Logo</b><br><small>PNG or SVG (Max 2MB)</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 2: TEMPLATES -->
+      <div class="desk-sc" id="dsc2">
+        <div class="desk-wrap">
+          <div class="app">
+            <div class="sidebar">
+              <div class="sb-logo">Total Inspections</div>
+              <div class="sb-nav">
+                <div class="nav-item"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
+                <div class="nav-item active"><div class="nav-icon"></div> Templates</div>
+                <div class="nav-item"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
+                <div class="nav-item"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
+              </div>
+            </div>
+            <div class="main">
+              <div class="header"><h1>Template Management</h1><div class="user-avatar"></div></div>
+              <div class="content">
+                <div class="card" style="padding:0">
+                  <div class="tpl-row">
+                    <div class="tpl-info"><h4>Residential Pre-Purchase</h4><p>Standard building inspection framework</p></div>
+                    <span class="badge active">Active</span>
+                  </div>
+                  <div class="tpl-row">
+                    <div class="tpl-info"><h4>Timber & Pest Inspection</h4><p>AS 4349.3 compliant formatting</p></div>
+                    <span class="badge active">Active</span>
+                  </div>
+                  <div class="tpl-row">
+                    <div class="tpl-info"><h4>Commercial Dilapidation</h4><p>Pre-construction condition report</p></div>
+                    <span class="badge">Draft</span>
+                  </div>
+                  <div class="tpl-row">
+                    <div class="tpl-info"><h4>Pool Safety Certification</h4><p>Barrier and fence compliance checklist</p></div>
+                    <span class="badge active">Active</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN 1: DASHBOARD (Active natively with animated SVG) -->
+      <div class="desk-sc" id="dsc1" style="opacity: 1;">
+        <div class="desk-wrap">
+          <div class="app">
+            <div class="sidebar">
+              <div class="sb-logo">Total Inspections</div>
+              <div class="sb-nav">
+                <div class="nav-item active"><div class="nav-icon" style="border-radius:50%"></div> Dashboard</div>
+                <div class="nav-item"><div class="nav-icon"></div> Templates</div>
+                <div class="nav-item"><div class="nav-icon" style="transform:rotate(45deg)"></div> Branding</div>
+                <div class="nav-item"><div class="nav-icon" style="width:16px;height:2px;box-shadow:0 6px 0 currentColor, 0 12px 0 currentColor"></div> Reports</div>
+              </div>
+            </div>
+            <div class="main">
+              <div class="header"><h1>Dashboard Overview</h1><div class="user-avatar"></div></div>
+              <div class="content">
+                <div class="dash-stats">
+                  <div class="stat-box highlight"><small>Jobs Completed</small><b id="jobs">0</b></div>
+                  <div class="stat-box"><small>Revenue (MTD)</small><b id="rev">$0.0k</b></div>
+                  <div class="stat-box"><small>Active Field Teams</small><b style="color:var(--text)">4</b></div>
+                </div>
+                
+                <div class="card">
+                  <h3 style="margin-bottom:16px;font-size:15px;color:var(--text)">Performance Metrics</h3>
+                  <div class="graph-container">
+                    <div class="bar-chart">
+                      <svg viewBox="0 0 138 60" aria-hidden="true">
+                        <rect class="b" x="0"   width="14" y="33" height="27" rx="2"/>
+                        <rect class="b" x="20"  width="14" y="22" height="38" rx="2"/>
+                        <rect class="b" x="40"  width="14" y="35" height="25" rx="2"/>
+                        <rect class="b" x="60"  width="14" y="17" height="43" rx="2"/>
+                        <rect class="b" x="80"  width="14" y="25" height="35" rx="2"/>
+                        <rect class="b hot" x="100" width="14" y="6" height="54" rx="2"/>
+                        <rect class="b" x="120" width="14" y="30" height="30" rx="2"/>
+                      </svg>
+                    </div>
+                    <div class="line-chart">
+                      <svg viewBox="0 0 200 60" aria-hidden="true" preserveAspectRatio="none">
+                        <defs>
+                          <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0" stop-color="#f15b29" stop-opacity=".35"/>
+                            <stop offset="1" stop-color="#f15b29" stop-opacity="0"/>
+                          </linearGradient>
+                        </defs>
+                        <path id="area" fill="url(#fill)"/>
+                        <path id="ln" class="line"/>
+                        <circle id="live-dot" r="3.5" fill="#f15b29"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -133,6 +310,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
   <div class="chip" style="top:438px"><em>S</em>Stripe</div>
   <div class="chip" style="top:563px"><em>{}</em>Your API</div>
 
+  <!-- Mobile phone screens remain as images per your setup -->
   <div class="phone">
     <div class="screen" id="screen">
       <div class="sc" id="sc5"><img src="images/m5-pdf.png" alt="PDF is generated"></div>
@@ -156,7 +334,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
       ln=$('ln'),area=$('area'),dot=$('live-dot'),jobs=$('jobs'),rev=$('rev'),bars=[].slice.call(document.querySelectorAll('.b'));
 
   /* ---------- TIMELINE (seconds) ---------- */
-  var T=20; // total loop length
+  var T=20; 
 
   // 4 Desktop screens cycling throughout the story
   var DESK_SCREENS=[
@@ -166,28 +344,27 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
     {id:'dsc4', url:'app.totalinspections.com.au/reports',   fade:[14.6, 15.2, 19.4, 19.9], scroll:[15.2, 18.8]}
   ];
 
-  // 5 Mobile screens cycling smoothly
   var SCREENS=[
-    {id:'sc1',fade:[-1,0,3.4,3.9],     scroll:[0.6,3.2]},   // home
-    {id:'sc2',fade:[3.4,3.9,7.2,7.7],  scroll:[4.0,7.0]},   // property
-    {id:'sc3',fade:[7.2,7.7,11.0,11.5],scroll:[7.8,10.8]},  // findings
-    {id:'sc4',fade:[11.0,11.5,14.8,15.3],scroll:[11.6,14.6]},// summary
-    {id:'sc5',fade:[14.8,15.3,19.4,19.9],scroll:[15.4,16.9]}// pdf generated
+    {id:'sc1',fade:[-1,0,3.4,3.9],     scroll:[0.6,3.2]},
+    {id:'sc2',fade:[3.4,3.9,7.2,7.7],  scroll:[4.0,7.0]},
+    {id:'sc3',fade:[7.2,7.7,11.0,11.5],scroll:[7.8,10.8]},
+    {id:'sc4',fade:[11.0,11.5,14.8,15.3],scroll:[11.6,14.6]},
+    {id:'sc5',fade:[14.8,15.3,19.4,19.9],scroll:[15.4,16.9]}
   ];
 
-  var SENT=[17.4,17.8,19.2,19.7];                 // "Report sent" overlay
-  var TOAST1=[1.7,2.0,4.4,4.8];                   // New booking received
-  var TOAST2=[12.5,12.9,18.8,19.4];               // Quote #318 auto-generated
-  var TOAST3=[17.9,18.3,19.0,19.6];               // Invoice synced to Xero
+  var SENT=[17.4,17.8,19.2,19.7];
+  var TOAST1=[1.7,2.0,4.4,4.8];
+  var TOAST2=[12.5,12.9,18.8,19.4];
+  var TOAST3=[17.9,18.3,19.0,19.6];
   var GRAPH_BUILD=[0.2,3.2], GRAPH_DRAIN=[18.6,19.8];
 
-  DESK_SCREENS.forEach(function(s){s.el=$(s.id);s.wrap=s.el.querySelector('.desk-wrap');s.img=s.el.querySelector('img')});
+  DESK_SCREENS.forEach(function(s){s.el=$(s.id);s.wrap=s.el.querySelector('.desk-wrap');});
   SCREENS.forEach(function(s){s.el=$(s.id);s.img=s.el.querySelector('img')});
 
   function fit(){var s=Math.min(innerWidth/1600,innerHeight/900);stage.style.transform='translate(-50%,-50%) scale('+s+')'}
   addEventListener('resize',fit);fit();
 
-  /* dotted connectors phone -> integrations, with travelling dots */
+  /* dotted connectors */
   var NS='http://www.w3.org/2000/svg',ox=1254,oy=480,cy=[218,340,465,590],dots=[];
   cy.forEach(function(y){
     var l=document.createElementNS(NS,'line');
@@ -199,7 +376,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
     dots.push({el:d,y:y});
   });
 
-  /* ---------- helpers ---------- */
+  /* helpers */
   var c=function(x){return x<0?0:x>1?1:x},
       p=function(t,a,b){return c((t-a)/(b-a))},
       ease=function(x){return x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2},
@@ -210,37 +387,33 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
 
   function measure(){
     var vH = deskView.clientHeight;
+    // Calculate max scroll for coded desktop UIs based on wrapper heights vs viewport
     DESK_SCREENS.forEach(function(s){s.max=Math.max(0,s.wrap.offsetHeight-vH)});
-    SCREENS.forEach(function(s){s.max=Math.max(0,s.img.offsetHeight-screen.clientHeight)});
+    SCREENS.forEach(function(s){if(s.img)s.max=Math.max(0,s.img.offsetHeight-screen.clientHeight)});
   }
 
-  // Live graph coordinates for d1 dashboard
   var lineBase = [[0,44],[22,38],[44,42],[66,28],[88,32],[110,18],[132,22],[154,10],[176,14],[200,6]];
 
   function frame(t){
-    /* 1. Desktop screens transition & scroll */
+    /* 1. Desktop Coded Screens transition & simulated scroll */
     var activeUrl = DESK_SCREENS[0].url;
     var maxOpacity = 0;
 
     DESK_SCREENS.forEach(function(s, i){
       var o = win(t, s.fade);
-      if(i === 0) o = c(o + c((t - 19.4) / .6)); // dsc1 fades back in at loop end
+      if(i === 0) o = c(o + c((t - 19.4) / .6));
       s.el.style.opacity = o.toFixed(3);
 
-      if(o > maxOpacity){
-        maxOpacity = o;
-        activeUrl = s.url;
-      }
+      if(o > maxOpacity){ maxOpacity = o; activeUrl = s.url; }
 
+      // Scroll the coded UI slightly to simulate user scanning down the page
       var sd = ease(p(t, s.scroll[0], s.scroll[1]));
       s.wrap.style.transform = 'translateY(' + (-sd * s.max).toFixed(1) + 'px)';
     });
 
-    if(urlBar.textContent !== activeUrl){
-      urlBar.textContent = activeUrl;
-    }
+    if(urlBar.textContent !== activeUrl) urlBar.textContent = activeUrl;
 
-    /* 2. Live graph animation on Dashboard (d1) */
+    /* 2. Live graph animation integrated into D1 Dashboard */
     var v = out(p(t, GRAPH_BUILD[0], GRAPH_BUILD[1])) * (1 - ease(p(t, GRAPH_DRAIN[0], GRAPH_DRAIN[1])));
     
     bars.forEach(function(b, i){
@@ -269,21 +442,18 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
     jobs.textContent = Math.round(128 * v);
     rev.textContent = '$' + (48.2 * v).toFixed(1) + 'k';
 
-    /* 3. Phone screens transition & scroll */
+    /* 3. Mobile screen images transition */
     SCREENS.forEach(function(s, i){
       var o = win(t, s.fade);
-      if(i === 0) o = c(o + c((t - 19.4) / .6)); // home fades back in for seamless loop
+      if(i === 0) o = c(o + c((t - 19.4) / .6));
       s.el.style.opacity = o.toFixed(3);
       var f = (i === 0 && t > 4) ? 0 : soft(p(t, s.scroll[0], s.scroll[1]));
-      s.img.style.transform = 'translateY(' + (-f * s.max).toFixed(1) + 'px)';
+      if(s.img) s.img.style.transform = 'translateY(' + (-f * s.max).toFixed(1) + 'px)';
     });
     sent.style.opacity = win(t, SENT).toFixed(3);
 
     /* 4. Toasts + connector dots */
-    toast('t1', TOAST1, t);
-    toast('t2', TOAST2, t);
-    toast('t3', TOAST3, t);
-
+    toast('t1', TOAST1, t); toast('t2', TOAST2, t); toast('t3', TOAST3, t);
     dots.forEach(function(d, i){
       var u = ((t * .55 + i * .27) % 1);
       d.el.setAttribute('cx', (ox + (1348 - ox) * u).toFixed(1));
@@ -299,25 +469,16 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);cursor:none}
     requestAnimationFrame(tick);
   }
 
-  // START IMMEDIATELY at t = 0 simultaneously for both screens
   measure();
   restart();
   requestAnimationFrame(tick);
 
-  // Recalculate measurements as assets finish loading
-  var allImgs = DESK_SCREENS.map(function(s){return s.img}).concat(SCREENS.map(function(s){return s.img}));
+  var allImgs = SCREENS.map(function(s){return s.img});
   allImgs.forEach(function(im){
-    if(!im.complete) im.onload = measure;
+    if(im && !im.complete) im.onload = measure;
   });
   addEventListener('resize', measure);
 
-  document.addEventListener('keydown', function(e){
-    if(e.key === 'r' || e.key === 'R') restart();
-    if(e.key === 'f' || e.key === 'F'){
-      if(document.fullscreenElement) document.exitFullscreen();
-      else if(document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
-    }
-  });
 })();
 </script>
 </body>
